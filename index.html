@@ -10,7 +10,7 @@
 </head>
 <body>
     <div class="WPM" id="WPM"></div>
-    <canvas class="canvas" id="game" width="800" height="350"></canvas>
+    <canvas onmousemove="setMouseXY(event)"  onclick="click(event)" class="canvas" id="game" width="800" height="350"></canvas>
     <div class="quote-container">
         <div class="quote-display" id="quoteDisplay"></div>
         <textarea id="quoteInput" class="quote-input" autofocus></textarea>

@@ -4,10 +4,18 @@ var context = canvas.getContext("2d")
 const SCREEN_HEIGHT = 400
 const SCREEN_WIDTH = 800
 
+var mouseX = 0
+var mouseY = 0
+var click = false
+
 const quoteDisplayElement = document.getElementById("quoteDisplay")
 const quoteInputElement = document.getElementById("quoteInput")
 const WPMElement = document.getElementById('WPM')
- 
+
+canvas.addEventListener('click', function(evt) {  
+    click = true
+})
+
 quoteInputElement.addEventListener('input', () => {
     var quoteArray = quoteDisplayElement.querySelectorAll('span')
     var playerInputArray = quoteInputElement.value.split('')
@@ -16,7 +24,7 @@ quoteInputElement.addEventListener('input', () => {
         playerInputArray = ""
     }
     var correct = true
-
+    
     quoteArray.forEach((charSpan, index) => {
         var char = playerInputArray[index]
         if (char == null) {
@@ -33,13 +41,19 @@ quoteInputElement.addEventListener('input', () => {
             correct = false
         }
     })
-
+    
     if (correct)
     {
         totalTypedWords += getTypedWords()
         getRandomQuote()
     }
 })
+
+function setMouseXY(event)
+{
+    mouseX = event.clientX
+    mouseY = event.clientY
+}
 
 function getRandomQuote() {
     quoteInputElement.value = ""
