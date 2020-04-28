@@ -9,12 +9,10 @@ body {
     min-height: 100vh;
     margin: 0;
 
-    height: 100%;
     background-image: url('back.png');
     background-position: center;
     background-repeat: no-repeat;
-    background-size: cover;   
-    /* background-color: rgb(156, 161, 161); */
+    background-size: cover;
 }
 
 body, .quote-input {
@@ -29,14 +27,14 @@ body, .quote-input {
     max-width: 90%;
     
     position: absolute;
-    bottom: 2rem;
+    bottom: 1rem;
 }
 
 .WPM {
     position: absolute;
-    top: 2rem;
+    top: 0.5rem;
     font-size: 3rem;
-    color: white;
+    color: black;
     font-weight: bold;
 }
 
@@ -61,6 +59,19 @@ body, .quote-input {
 
 .quote-input:focus {
     border-color: black;
+}
+
+.canvas {
+    position: absolute;
+    top: 4.0rem;
+}
+
+canvas.taller-screen {
+    top: 8rem;
+}
+
+.WPM.taller-screen {
+    top: 2rem;
 }
 
 .correct {

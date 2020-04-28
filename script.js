@@ -1,3 +1,9 @@
+var canvas = document.getElementById("game")
+var context = canvas.getContext("2d")
+
+const SCREEN_HEIGHT = 400
+const SCREEN_WIDTH = 800
+
 const quoteDisplayElement = document.getElementById("quoteDisplay")
 const quoteInputElement = document.getElementById("quoteInput")
 const WPMElement = document.getElementById('WPM')
@@ -6,7 +12,6 @@ quoteInputElement.addEventListener('input', () => {
     var quoteArray = quoteDisplayElement.querySelectorAll('span')
     var playerInputArray = quoteInputElement.value.split('')
     if (playerInputArray[0] == " ") {
-        console.log("LMAO")
         quoteInputElement.value = ""
         playerInputArray = ""
     }
@@ -37,8 +42,7 @@ quoteInputElement.addEventListener('input', () => {
 })
 
 function getRandomQuote() {
-    console.log("lmao")
-    quoteInputElement.value = null
+    quoteInputElement.value = ""
     
     loadJSON(function(response) {
         var json = JSON.parse(response)
@@ -57,13 +61,13 @@ function getRandomQuote() {
 
 let startTime 
 var totalTypedWords = 0
-function startAndRunTimer()
-{
+function startAndRunTimer() {
     WPMElement.innerText = 0
     startTime = new Date()
     setInterval(() => {
-        if (getTimerTime != 0) {
-        WPMElement.innerText = Math.floor(totalTypedWords + getTypedWords() / getTimerTime() * 60)
+        if (getTimerTime() != 0) {
+            WPMElement.innerText = 
+                Math.floor((totalTypedWords + getTypedWords() - 1) / getTimerTime() * 60)
         }
     }, 100)
 }
@@ -91,7 +95,40 @@ function loadJSON(callback) {
     xobj.send(null);
 }
 
+function title() {
+    requestAnimationFrame(title)
+    context.clearRect(0, 0, canvas.width, canvas.height)
+
+    context.beginPath()
+    context.rect(0, 0, canvas.width, canvas.height)
+    context.fillStyle = "rgb(0, 0, 0)"
+    context.fill()
+    context.closePath()
+
+    context.beginPath()
+    context.fillStyle = "rgb(240, 240, 240)"
+    context.rect(180, 220, 150, 40)
+    context.rect(480, 220, 150, 40)
+    context.fill()
+    context.closePath()
+
+    context.beginPath()
+    context.fillStyle = "rgb(100, 130, 180)"
+    context.font = "normal 40px Lato"
+    context.fillText("Typersion", 320, 80)
+    context.font = "normal 20px Lato"
+    context.fillText("Adventure", 210, 250)
+    context.fillText("Freeplay", 520, 250)
+    context.closePath()
+
+}
+
 function init() {
+    if (screen.height > 800) {
+        canvas.classList.add("taller-screen")
+        WPMElement.classList.add("taller-screen")
+    }
+    title()
     getRandomQuote()
     startAndRunTimer()
 }
