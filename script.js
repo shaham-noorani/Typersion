@@ -5,6 +5,11 @@ const WPMElement = document.getElementById('WPM')
 quoteInputElement.addEventListener('input', () => {
     var quoteArray = quoteDisplayElement.querySelectorAll('span')
     var playerInputArray = quoteInputElement.value.split('')
+    if (playerInputArray[0] == " ") {
+        console.log("LMAO")
+        quoteInputElement.value = ""
+        playerInputArray = ""
+    }
     var correct = true
 
     quoteArray.forEach((charSpan, index) => {
