@@ -91,7 +91,14 @@ function getTimerTime() {
 }
 
 function getTypedWords() {
-    return quoteInputElement.value.split(" ").length
+    var words = 0
+    var playerInputArray = quoteInputElement.value.split(" ")
+    playerInputArray.forEach((word) => {
+        if (word != "") {
+            words++
+        }
+    })
+    return words
 }
 
 function loadJSON(callback) {   
@@ -150,6 +157,12 @@ function title() {
     }
     else if (mouseX > 180 && mouseX < 180 + 150 && mouseY > 220 & mouseY < 220 + 40) {
         adventureButtonColor = "rgb(255, 255, 255)"
+        
+        if (click) {
+            adventureMode()
+            requestAnimationFrame(adventureMode)
+            currentScreen = "adventure"
+        }
     }
     else {
         freePlayButtonColor = "rgb(200, 200, 200)"
@@ -158,6 +171,85 @@ function title() {
     click = false
 
 }
+
+function adventureMode() {
+    if (currentScreen == "adventure") {
+        requestAnimationFrame(adventureMode)
+    }
+    context.clearRect(0, 0, canvas.width, canvas.height)
+
+    drawPlayer()
+    drawEnemy()
+    drawSlashes()
+    if (!quoteDisplayElement.innerText) {
+        getRandomQuote()
+    }
+}
+
+function drawPlayer() {
+    playerImg = new Image(200, 80)
+    playerImg.src = "player.png"
+    context.drawImage(playerImg, 100, 220)
+}
+
+function drawEnemy() {
+    enemyImg = new Image(200, 80)
+    enemyImg.src = "cyclops.png"
+    context.drawImage(enemyImg, 500, 220)
+}
+
+var playerSlashes = []
+var slashImg = new Image(150, 220)
+slashImg.src = "slash.png"
+function createSlash() {
+    var slash = {
+        img: slashImg,
+        x: 150,
+        y: 220
+    }
+    playerSlashes.push(slash)
+}
+
+function drawSlashes() {
+    playerSlashes.forEach((slash) => {
+        context.drawImage(slash.img, slash.x, slash.y)
+        slash.x += 20
+        if (slash.x > context.width) {
+            playerSlashes.remove(slash)
+        }
+    })
+}
+
+function keyPressed(event)
+{
+    switch(event.keyCode)
+    {
+        case 32:
+        // Spacebar
+            if (currentScreen == "adventure") {
+                var quoteArray = quoteDisplayElement.querySelectorAll('span')
+                var playerInputArray = quoteInputElement.value.split('')
+                console.log(playerInputArray)
+                shoot = true
+                for (var i = playerInputArray.length-1; i >= 0; i--)
+                {
+                    if (i != quoteArray.length-1 && i == playerInputArray.length-1) { //first iteration
+                        if (quoteArray[i+1].innerText != " ") {
+                            shoot = false
+                            console.log(quoteArray[i+1].innerText)
+                        }
+                    }
+                    if (playerInputArray[i] != quoteArray[i].innerText) {
+                        shoot = false
+                    }
+                }
+                if (shoot && playerInputArray.length > 0) { createSlash() }
+            }
+            break
+    }
+}
+
+document.addEventListener('keydown', keyPressed)
 
 function freePlay() {
     canvas.style.display = "none"
