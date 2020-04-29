@@ -1,12 +1,11 @@
 var canvas = document.getElementById("game")
 var context = canvas.getContext("2d")
 
-const SCREEN_HEIGHT = 400
-const SCREEN_WIDTH = 800
-
 var mouseX = 0
 var mouseY = 0
 var click = false
+
+var currentScreen
 
 const quoteDisplayElement = document.getElementById("quoteDisplay")
 const quoteInputElement = document.getElementById("quoteInput")
@@ -51,8 +50,8 @@ quoteInputElement.addEventListener('input', () => {
 
 function setMouseXY(event)
 {
-    mouseX = event.clientX
-    mouseY = event.clientY
+    mouseX = event.clientX - 176 + mouseXAdditional
+    mouseY = event.clientY - 127 + mouseYAdditional
 }
 
 function getRandomQuote() {
@@ -74,10 +73,11 @@ function getRandomQuote() {
 }
 
 let startTime 
-var totalTypedWords = 0
+var totalTypedWords
 function startAndRunTimer() {
     WPMElement.innerText = 0
     startTime = new Date()
+    totalTypedWords = 0
     setInterval(() => {
         if (getTimerTime() != 0) {
             WPMElement.innerText = 
@@ -109,42 +109,79 @@ function loadJSON(callback) {
     xobj.send(null);
 }
 
+var adventureButtonColor = "rgb(200, 200, 200)"
+var freePlayButtonColor = "rgb(200, 200, 200)"
 function title() {
-    requestAnimationFrame(title)
+    if (currentScreen == "title") {
+        requestAnimationFrame(title)
+    }
     context.clearRect(0, 0, canvas.width, canvas.height)
 
     context.beginPath()
-    context.rect(0, 0, canvas.width, canvas.height)
-    context.fillStyle = "rgb(0, 0, 0)"
+    context.fillStyle = adventureButtonColor
+    context.rect(180, 220, 150, 40)
     context.fill()
     context.closePath()
 
     context.beginPath()
-    context.fillStyle = "rgb(240, 240, 240)"
-    context.rect(180, 220, 150, 40)
+    context.fillStyle = freePlayButtonColor
     context.rect(480, 220, 150, 40)
     context.fill()
     context.closePath()
 
     context.beginPath()
-    context.fillStyle = "rgb(100, 130, 180)"
+    context.fillStyle = "rgb(40, 70, 120)"
     context.font = "normal 40px Lato"
     context.fillText("Typersion", 320, 80)
+    context.fillStyle = "rgb(100, 130, 180)"
     context.font = "normal 20px Lato"
     context.fillText("Adventure", 210, 250)
     context.fillText("Freeplay", 520, 250)
     context.closePath()
 
+    if (mouseX > 480 && mouseX < 480 + 150 && mouseY > 220 & mouseY < 220 + 40) {
+        freePlayButtonColor = "rgb(255, 255, 255)"
+
+        if (click) {
+            freePlay()
+            requestAnimationFrame(freePlay)
+            currentScreen = "freePlay"
+        }
+    }
+    else if (mouseX > 180 && mouseX < 180 + 150 && mouseY > 220 & mouseY < 220 + 40) {
+        adventureButtonColor = "rgb(255, 255, 255)"
+    }
+    else {
+        freePlayButtonColor = "rgb(200, 200, 200)"
+        adventureButtonColor = "rgb(200, 200, 200)"
+    }
+    click = false
+
 }
 
+function freePlay() {
+    canvas.style.display = "none"
+    WPMElement.style.top = "5rem"
+    document.getElementById("quoteContainer").style.bottom = "6rem"
+    document.getElementById("resetWPMButton").style.display = "block"
+
+    getRandomQuote()
+    startAndRunTimer()
+}
+
+var mouseXAdditional = 0
+var mouseYAdditional = 0
 function init() {
     if (screen.height > 800) {
         canvas.classList.add("taller-screen")
         WPMElement.classList.add("taller-screen")
     }
+    else {
+        mouseXAdditional = 37; mouseYAdditional = 64;
+    }
+    document.getElementById("resetWPMButton").style.display = "none"
+    currentScreen = "title"
     title()
-    getRandomQuote()
-    startAndRunTimer()
 }
 
 init()

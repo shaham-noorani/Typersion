@@ -11,9 +11,10 @@
 <body>
     <div class="WPM" id="WPM"></div>
     <canvas onmousemove="setMouseXY(event)"  onclick="click(event)" class="canvas" id="game" width="800" height="350"></canvas>
-    <div class="quote-container">
+    <div class="quote-container" id="quoteContainer">
         <div class="quote-display" id="quoteDisplay"></div>
         <textarea id="quoteInput" class="quote-input" autofocus></textarea>
     </div>
+    <button id="resetWPMButton" onclick="startAndRunTimer()">Reset WPM</button>
 </body>
 </html>

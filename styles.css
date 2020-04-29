@@ -74,6 +74,25 @@ canvas.taller-screen {
     top: 2rem;
 }
 
+button {
+    background-color: rgb(55, 135, 211); /* Green */
+    border: none;
+    color: white;
+    padding: 15px 32px;
+    text-align: center;
+    text-decoration: none;
+    display: inline-block;
+    font-size: 16px;
+    margin: 4px 2px;
+    cursor: pointer;
+    position: absolute;
+    bottom: 2rem;
+}
+
+button:hover {
+    background-color: rgb(117, 172, 223);
+}
+
 .correct {
     color: green;
 }
