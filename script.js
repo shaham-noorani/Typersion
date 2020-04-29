@@ -179,7 +179,11 @@ function adventureMode() {
     context.clearRect(0, 0, canvas.width, canvas.height)
 
     drawPlayer()
+    if (enemyHealth == 0) {
+        createEnemy()
+    }
     drawEnemy()
+    drawEnemyHealthBar()
     drawSlashes()
     if (!quoteDisplayElement.innerText) {
         getRandomQuote()
@@ -192,10 +196,23 @@ function drawPlayer() {
     context.drawImage(playerImg, 100, 220)
 }
 
+function createEnemy() {
+    enemyHealth = 5
+}
+
 function drawEnemy() {
     enemyImg = new Image(200, 80)
     enemyImg.src = "cyclops.png"
-    context.drawImage(enemyImg, 500, 220)
+    context.drawImage(enemyImg, 650, 220)
+}
+
+var enemyHealth = 0
+function drawEnemyHealthBar() {
+    context.beginPath()
+    context.fillStyle = "rgb(200, 0, 0)"
+    context.rect(620, 180, 140 * (enemyHealth / 5), 20)
+    context.fill()
+    context.closePath()
 }
 
 var playerSlashes = []
@@ -211,11 +228,16 @@ function createSlash() {
 }
 
 function drawSlashes() {
-    playerSlashes.forEach((slash) => {
+    playerSlashes.forEach((slash, i) => {
         context.drawImage(slash.img, slash.x, slash.y)
         slash.x += 20
-        if (slash.x > context.width) {
-            playerSlashes.remove(slash)
+        if (slash.x > 600) {
+            var hits = localStorage.getItem("hits")
+            playerSlashes.splice(i, 1)
+            enemyHealth -= 1
+            if (enemyHealth <= 0) {
+                createEnemy()
+            }
         }
     })
 }
@@ -229,14 +251,12 @@ function keyPressed(event)
             if (currentScreen == "adventure") {
                 var quoteArray = quoteDisplayElement.querySelectorAll('span')
                 var playerInputArray = quoteInputElement.value.split('')
-                console.log(playerInputArray)
                 shoot = true
                 for (var i = playerInputArray.length-1; i >= 0; i--)
                 {
                     if (i != quoteArray.length-1 && i == playerInputArray.length-1) { //first iteration
                         if (quoteArray[i+1].innerText != " ") {
                             shoot = false
-                            console.log(quoteArray[i+1].innerText)
                         }
                     }
                     if (playerInputArray[i] != quoteArray[i].innerText) {

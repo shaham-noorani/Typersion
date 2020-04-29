@@ -1,0 +1,22 @@
+{
+  "name": "typersion",
+  "version": "1.0.0",
+  "description": "typing practice game",
+  "main": "script.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShahamNoorani/Typersion.git"
+  },
+  "author": "Shaham Noorani",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShahamNoorani/Typersion/issues"
+  },
+  "homepage": "https://github.com/ShahamNoorani/Typersion#readme",
+  "dependencies": {
+    "fs": "0.0.1-security"
+  }
+}
