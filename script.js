@@ -476,7 +476,7 @@ function keyPressed(event)
     {
         case 32:
         // Spacebar
-            if (currentScreen == "adventure") {
+            if (currentScreen == "goOut") {
                 var quoteArray = quoteDisplayElement.querySelectorAll('span')
                 var playerInputArray = quoteInputElement.value.split('')
                 shoot = true
