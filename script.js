@@ -48,9 +48,8 @@ quoteInputElement.addEventListener('input', () => {
     }
 })
 
-function setMouseXY(event)
-{
-    mouseX = event.clientX - 176 + mouseXAdditional
+function setMouseXY(event) {
+    mouseX = event.clientX - 320 + mouseXAdditional
     mouseY = event.clientY - 127 + mouseYAdditional
 }
 
@@ -179,15 +178,14 @@ function adventureMode() {
     context.clearRect(0, 0, canvas.width, canvas.height)
 
     drawPlayer()
-    if (enemyHealth == 0) {
-        createEnemy()
-    }
     drawEnemy()
-    drawEnemyHealthBar()
     drawSlashes()
     if (!quoteDisplayElement.innerText) {
         getRandomQuote()
     }
+    handlePlayerObj()
+    handleEnemyObj()
+    drawEnemyHealthBar()
 }
 
 function drawPlayer() {
@@ -196,8 +194,76 @@ function drawPlayer() {
     context.drawImage(playerImg, 100, 220)
 }
 
-function createEnemy() {
-    enemyHealth = 5
+function handlePlayerObj() {
+    var player = getPlayer()
+    if (player == null) {
+        console.log("lmao")
+        player = {
+            level: 1,
+            xp: 0,
+            xpUntilNextLevel: getXPUntilNextLevel(1),
+            ap: 0,
+            attack: 1,
+            luck: 1,
+            stage: 1,
+            enemiesLeftOnStage: 5,
+            inventory: []
+        }
+        setPlayer(player)
+    }
+    if (player.xp > player.xpUntilNextLevel) {
+        player.xp -= player.xpUntilNextLevel
+        player.level += 1
+        player.ap += 1
+        player.xpUntilNextLevel = getXPUntilNextLevel(player.level)
+        setPlayer(player)
+    }
+}
+
+function handleEnemyObj() {
+    var enemy = getEnemy()
+    if (enemy == null) {
+        enemy = {
+            health: 5,
+        }
+        setEnemy(enemy)
+    }
+    if (enemy.health <= 0) {
+        enemy.health = calcEnemyHealth()
+        setEnemy(enemy)
+        givePlayerXP()
+    }
+}
+
+function getPlayer() {
+    return JSON.parse(localStorage.getItem("player"))
+}
+
+function setPlayer(player) {
+    localStorage.setItem("player", JSON.stringify(player))
+}
+
+function getEnemy() {
+    return JSON.parse(localStorage.getItem("enemy"))
+}
+
+function setEnemy(enemy) {
+    localStorage.setItem("enemy", JSON.stringify(enemy))
+}
+
+function calcEnemyHealth() {
+    var stage = getPlayer().stage
+    return Math.floor(stage / 5) * 5 + 5
+}
+
+function givePlayerXP() {
+    var player = getPlayer()
+    player.xp += Math.floor(player.stage / 5) * 5 + 1
+    setPlayer(player)
+}
+
+function getXPUntilNextLevel(level) {
+    return Math.floor((level * level) / 5) + 5
 }
 
 function drawEnemy() {
@@ -206,11 +272,10 @@ function drawEnemy() {
     context.drawImage(enemyImg, 650, 220)
 }
 
-var enemyHealth = 0
 function drawEnemyHealthBar() {
     context.beginPath()
     context.fillStyle = "rgb(200, 0, 0)"
-    context.rect(620, 180, 140 * (enemyHealth / 5), 20)
+    context.rect(620, 180, 140 * (getEnemy().health / calcEnemyHealth()), 20)
     context.fill()
     context.closePath()
 }
@@ -232,14 +297,16 @@ function drawSlashes() {
         context.drawImage(slash.img, slash.x, slash.y)
         slash.x += 20
         if (slash.x > 600) {
-            var hits = localStorage.getItem("hits")
+            dealDamage()
             playerSlashes.splice(i, 1)
-            enemyHealth -= 1
-            if (enemyHealth <= 0) {
-                createEnemy()
-            }
         }
     })
+} 
+
+function dealDamage() {
+    var enemy = getEnemy(), player = getPlayer()
+    enemy.health -= player.attack
+    setEnemy(enemy)
 }
 
 function keyPressed(event)
