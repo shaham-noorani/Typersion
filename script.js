@@ -55,6 +55,7 @@ function setMouseXY(event) {
 
 function getRandomQuote() {
     quoteInputElement.value = ""
+    lastShot = 0
     
     loadJSON(function(response) {
         var json = JSON.parse(response)
@@ -196,6 +197,7 @@ function adventure() {
     if (currentScreen == "adventure") {
         requestAnimationFrame(adventure)
     }
+    quoteDisplayElement.innerHTML = ''
 
     context.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -242,6 +244,7 @@ function adventure() {
 
         if (click) {
             currentScreen = "title"
+            quoteDisplayElement.innerHTML = ''
             title()
         }
     }
@@ -308,8 +311,10 @@ function goOut() {
         backButtonColor = "rgb(255, 255, 255)" 
 
         if (click) {
-            currentScreen = "title"
-            title()
+            currentScreen = "adventure"
+            quoteDisplayElement.innerHTML = ''
+            click = false
+            adventure()
         }
     }
     else {
@@ -469,7 +474,7 @@ function dealDamage() {
     enemy.health -= player.attack
     setEnemy(enemy)
 }
-
+var lastShot = 0
 function keyPressed(event)
 {
     switch(event.keyCode)
@@ -491,7 +496,10 @@ function keyPressed(event)
                         shoot = false
                     }
                 }
-                if (shoot && playerInputArray.length > 0) { createSlash() }
+                if (shoot && playerInputArray.length > 0 && lastShot < playerInputArray.length) { 
+                    createSlash()
+                    lastShot = playerInputArray.length
+                }
             }
             break
     }
@@ -504,6 +512,7 @@ function freePlay() {
     WPMElement.style.top = "5rem"
     document.getElementById("quoteContainer").style.bottom = "6rem"
     document.getElementById("resetWPMButton").style.display = "block"
+    document.getElementById("backButton").style.display = "block"
 
     getRandomQuote()
     startAndRunTimer()
