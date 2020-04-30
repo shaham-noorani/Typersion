@@ -54,6 +54,7 @@ function setMouseXY(event) {
 }
 
 function getRandomQuote() {
+    console.log("shit")
     quoteInputElement.value = ""
     
     loadJSON(function(response) {
@@ -74,13 +75,14 @@ function getRandomQuote() {
 let startTime 
 var totalTypedWords
 function startAndRunTimer() {
+    getRandomQuote()
     WPMElement.innerText = 0
     startTime = new Date()
     totalTypedWords = 0
     setInterval(() => {
         if (getTimerTime() != 0) {
             WPMElement.innerText = 
-                Math.floor((totalTypedWords + getTypedWords() - 1) / getTimerTime() * 60)
+                Math.floor((totalTypedWords + getTypedWords()) / getTimerTime() * 60)
         }
     }, 100)
 }
@@ -149,6 +151,7 @@ function title() {
         freePlayButtonColor = "rgb(255, 255, 255)"
 
         if (click) {
+            freePlayButtonColor = "rgb(200, 200, 200)"
             freePlay()
             requestAnimationFrame(freePlay)
             currentScreen = "freePlay"
@@ -158,6 +161,7 @@ function title() {
         adventureButtonColor = "rgb(255, 255, 255)"
         
         if (click) {
+            adventureButtonColor = "rgb(200, 200, 200)"
             adventureMode()
             requestAnimationFrame(adventureMode)
             currentScreen = "adventure"
@@ -171,6 +175,20 @@ function title() {
 
 }
 
+function backToTitle() {
+    canvas.style.display = "flex"
+    WPMElement.style.display = "none"
+    document.getElementById("quoteContainer").style.bottom = "1rem"
+    document.getElementById("resetWPMButton").style.display = "none"
+    document.getElementById("backButton").style.display = "none"
+
+    quoteDisplayElement.innerHTML = ''
+
+    currentScreen = "title"
+    title()
+}
+
+var backButtonColor = "rgb(200, 200, 200)"
 function adventureMode() {
     if (currentScreen == "adventure") {
         requestAnimationFrame(adventureMode)
@@ -186,6 +204,31 @@ function adventureMode() {
     handlePlayerObj()
     handleEnemyObj()
     drawEnemyHealthBar()
+
+    context.beginPath()
+    context.fillStyle = backButtonColor
+    context.rect(60, 20, 70, 30)
+    context.fill()
+    context.closePath()
+
+    context.beginPath()
+    context.fillStyle = "rgb(100, 130, 180)"
+    context.font = "normal 15px Lato"
+    context.fillText("Back", 80, 40)
+    context.closePath()
+
+    if (mouseX > 60 && mouseX < 60 + 70 && mouseY > 20 & mouseY < 20 + 30) {
+        backButtonColor = "rgb(255, 255, 255)" 
+
+        if (click) {
+            title()
+            requestAnimationFrame(title)
+            currentScreen = "title"
+        }
+    }
+    else {
+        backButtonColor = "rgb(200, 200, 200)"
+    }
 }
 
 function drawPlayer() {
@@ -196,8 +239,8 @@ function drawPlayer() {
 
 function handlePlayerObj() {
     var player = getPlayer()
-    if (player == null) {
-        console.log("lmao")
+    var updatePlayer = false
+    if (player == null || player == "undefined") {
         player = {
             level: 1,
             xp: 0,
@@ -209,15 +252,22 @@ function handlePlayerObj() {
             enemiesLeftOnStage: 5,
             inventory: []
         }
-        setPlayer(player)
+        updatePlayer = true
     }
-    if (player.xp > player.xpUntilNextLevel) {
+    if (player.xp >= player.xpUntilNextLevel) {
         player.xp -= player.xpUntilNextLevel
         player.level += 1
         player.ap += 1
         player.xpUntilNextLevel = getXPUntilNextLevel(player.level)
-        setPlayer(player)
+        updatePlayer = true
     }
+    if (player.enemiesLeftOnStage <= 0) {
+        player.stage += 1
+        player.enemiesLeftOnStage = 5
+        updatePlayer = true
+    }
+
+    if (setPlayer) { setPlayer(player) }
 }
 
 function handleEnemyObj() {
@@ -236,7 +286,25 @@ function handleEnemyObj() {
 }
 
 function getPlayer() {
-    return JSON.parse(localStorage.getItem("player"))
+    var result
+    try {
+        result = JSON.parse(localStorage.getItem("player"))
+    } catch (error) {
+        var player = {
+            level: 1,
+            xp: 0,
+            xpUntilNextLevel: getXPUntilNextLevel(1),
+            ap: 0,
+            attack: 1,
+            luck: 1,
+            stage: 1,
+            enemiesLeftOnStage: 5,
+            inventory: []
+        }
+        setPlayer(player)
+        result = JSON.parse(localStorage.getItem("player"))
+    } 
+    return result
 }
 
 function setPlayer(player) {
@@ -259,6 +327,7 @@ function calcEnemyHealth() {
 function givePlayerXP() {
     var player = getPlayer()
     player.xp += Math.floor(player.stage / 5) * 5 + 1
+    player.enemiesLeftOnStage -= 1
     setPlayer(player)
 }
 
@@ -278,6 +347,11 @@ function drawEnemyHealthBar() {
     context.rect(620, 180, 140 * (getEnemy().health / calcEnemyHealth()), 20)
     context.fill()
     context.closePath()
+}
+
+function drawStageText() {
+    var stage = getPlayer.stage
+
 }
 
 var playerSlashes = []

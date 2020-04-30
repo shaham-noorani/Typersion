@@ -87,6 +87,12 @@ button {
     cursor: pointer;
     position: absolute;
     bottom: 2rem;
+    border-radius: 0.5rem;
+}
+
+.back-button {
+    left: 14rem;
+
 }
 
 button:hover {
