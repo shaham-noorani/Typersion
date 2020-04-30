@@ -54,7 +54,6 @@ function setMouseXY(event) {
 }
 
 function getRandomQuote() {
-    console.log("shit")
     quoteInputElement.value = ""
     
     loadJSON(function(response) {
@@ -117,9 +116,23 @@ function loadJSON(callback) {
     xobj.send(null);
 }
 
+function backToTitle() {
+    canvas.style.display = "flex"
+    WPMElement.style.display = "none"
+    document.getElementById("quoteContainer").style.bottom = "1rem"
+    document.getElementById("resetWPMButton").style.display = "none"
+    document.getElementById("backButton").style.display = "none"
+
+    quoteDisplayElement.innerHTML = ''
+
+    currentScreen = "title"
+    title()
+}
+
 var adventureButtonColor = "rgb(200, 200, 200)"
 var freePlayButtonColor = "rgb(200, 200, 200)"
 function title() {
+    console.log("title")
     if (currentScreen == "title") {
         requestAnimationFrame(title)
     }
@@ -152,19 +165,19 @@ function title() {
 
         if (click) {
             freePlayButtonColor = "rgb(200, 200, 200)"
-            freePlay()
-            requestAnimationFrame(freePlay)
             currentScreen = "freePlay"
+            freePlay()
         }
     }
     else if (mouseX > 180 && mouseX < 180 + 150 && mouseY > 220 & mouseY < 220 + 40) {
         adventureButtonColor = "rgb(255, 255, 255)"
         
         if (click) {
+            click = false
             adventureButtonColor = "rgb(200, 200, 200)"
-            adventureMode()
-            requestAnimationFrame(adventureMode)
             currentScreen = "adventure"
+            adventure()
+            
         }
     }
     else {
@@ -175,23 +188,97 @@ function title() {
 
 }
 
-function backToTitle() {
-    canvas.style.display = "flex"
-    WPMElement.style.display = "none"
-    document.getElementById("quoteContainer").style.bottom = "1rem"
-    document.getElementById("resetWPMButton").style.display = "none"
-    document.getElementById("backButton").style.display = "none"
+var goOutButtonColor = "rgb(200, 200, 200)"
+var statsButtonColor = "rgb(200, 200, 200)"
+var inventoryButtonColor = "rgb(200, 200, 200)"
+var backButtonColor = "rgb(200, 200, 200)"
+function adventure() {
+    if (currentScreen == "adventure") {
+        requestAnimationFrame(adventure)
+    }
 
-    quoteDisplayElement.innerHTML = ''
+    context.clearRect(0, 0, canvas.width, canvas.height)
 
-    currentScreen = "title"
-    title()
+    context.beginPath()
+    context.fillStyle = backButtonColor
+    context.rect(80, 20, 70, 30)
+    context.fill()
+    context.closePath()
+
+    context.beginPath()
+    context.fillStyle = goOutButtonColor
+    context.rect(80, 220, 150, 40)
+    context.fill()
+    context.closePath()
+
+    context.beginPath()
+    context.fillStyle = statsButtonColor
+    context.rect(330, 220, 150, 40)
+    context.fill()
+    context.closePath()
+
+    context.beginPath()
+    context.fillStyle = inventoryButtonColor
+    context.rect(580, 220, 150, 40)
+    context.fill()
+    context.closePath()
+
+    context.beginPath()
+    context.fillStyle = "rgb(40, 70, 120)"
+    context.font = "normal 40px Lato"
+    context.fillText("Adventure", 320, 80)
+    context.fillStyle = "rgb(100, 130, 180)"
+    context.font = "normal 20px Lato"
+    context.fillText("Go out", 120, 250)
+    context.fillText("Stats", 380, 250)
+    context.fillText("Inventory", 610, 250)
+    context.font = "normal 15px Lato"
+    context.fillText("Back", 105, 40)
+    context.closePath()
+    context.closePath()
+
+    if (mouseX > 60 && mouseX < 60 + 70 && mouseY > 20 & mouseY < 20 + 30) {
+        backButtonColor = "rgb(255, 255, 255)" 
+
+        if (click) {
+            currentScreen = "title"
+            title()
+        }
+    }
+    else if (mouseX > 80 && mouseX < 80 + 150 && mouseY > 220 & mouseY < 220 + 40) {
+        goOutButtonColor = "rgb(255, 255, 255)"
+
+        if (click) {
+            click = false
+            currentScreen = "goOut"
+            goOut()
+        }
+    }
+    else if (mouseX > 330 && mouseX < 330 + 150 && mouseY > 220 & mouseY < 220 + 40) {
+        statsButtonColor = "rgb(255, 255, 255)"
+        
+        if (click) {
+        }
+    }
+    else if (mouseX > 580 && mouseX < 580 + 150 && mouseY > 220 & mouseY < 220 + 40) {
+        inventoryButtonColor = "rgb(255, 255, 255)"
+        
+        if (click) {
+        }
+    }
+    else {
+        goOutButtonColor = "rgb(200, 200, 200)"
+        statsButtonColor = "rgb(200, 200, 200)"
+        inventoryButtonColor = "rgb(200, 200, 200)"
+        backButtonColor = "rgb(200, 200, 200)"
+    }
+    click = false
 }
 
 var backButtonColor = "rgb(200, 200, 200)"
-function adventureMode() {
-    if (currentScreen == "adventure") {
-        requestAnimationFrame(adventureMode)
+function goOut() {
+    if (currentScreen == "goOut") {
+        requestAnimationFrame(goOut)
     }
     context.clearRect(0, 0, canvas.width, canvas.height)
 
@@ -221,14 +308,14 @@ function adventureMode() {
         backButtonColor = "rgb(255, 255, 255)" 
 
         if (click) {
-            title()
-            requestAnimationFrame(title)
             currentScreen = "title"
+            title()
         }
     }
     else {
         backButtonColor = "rgb(200, 200, 200)"
     }
+    click = false
 }
 
 function drawPlayer() {
@@ -433,6 +520,7 @@ function init() {
         mouseXAdditional = 37; mouseYAdditional = 64;
     }
     document.getElementById("resetWPMButton").style.display = "none"
+    document.getElementById("backButton").style.display = "none"
     currentScreen = "title"
     title()
 }
