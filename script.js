@@ -510,6 +510,7 @@ document.addEventListener('keydown', keyPressed)
 function freePlay() {
     canvas.style.display = "none"
     WPMElement.style.top = "5rem"
+    WPMElement.style.display = "flex"
     document.getElementById("quoteContainer").style.bottom = "6rem"
     document.getElementById("resetWPMButton").style.display = "block"
     document.getElementById("backButton").style.display = "block"
