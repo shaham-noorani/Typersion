@@ -43,6 +43,10 @@ quoteInputElement.addEventListener('input', () => {
     
     if (correct)
     {
+        if (currentScreen == "goOut") {
+            createMegaSlash()
+        }
+
         totalTypedWords += getTypedWords()
         getRandomQuote()
     }
@@ -53,6 +57,7 @@ function setMouseXY(event) {
     mouseY = event.clientY - 127 + mouseYAdditional
 }
 
+var lastRan = -1
 function getRandomQuote() {
     quoteInputElement.value = ""
     lastShot = 0
@@ -62,13 +67,18 @@ function getRandomQuote() {
     loadJSON(function(response) {
         var json = JSON.parse(response)
         var quotes = json.quotes
-        var ran = Math.floor(Math.random() * quotes.length) + 1 
+        var ran = Math.floor(Math.random() * quotes.length) + 1
         if (currentScreen == "goOut") {
-            var ran = Math.floor(stage * 1.5 - (Math.floor(Math.random() * 10) * -1 + 5) - luck)
+            var ran = Math.floor(stage * 1.5 - (Math.floor(Math.random() * 15) * -1 + 7) - luck)
             if (ran < 0) { ran = 0 }
             if (ran >= quotes.length) { ran = quotes.length - 1 }
+            
+            if (lastRan == ran) {
+                getRandomQuote()
+            }
         }
         var quote = quotes[ran].quote
+        lastRan = ran
 
         quoteDisplayElement.innerHTML = ''
         quote.split('').forEach(char => {
@@ -140,7 +150,6 @@ function backToTitle() {
 var adventureButtonColor = "rgb(200, 200, 200)"
 var freePlayButtonColor = "rgb(200, 200, 200)"
 function title() {
-    console.log("title")
     if (currentScreen == "title") {
         requestAnimationFrame(title)
     }
@@ -286,6 +295,7 @@ function adventure() {
 }
 
 var backButtonColor = "rgb(200, 200, 200)"
+var numberOfCompletedQuotes = -1
 function goOut() {
     if (currentScreen == "goOut") {
         requestAnimationFrame(goOut)
@@ -422,18 +432,19 @@ function setEnemy(enemy) {
 
 function calcEnemyHealth() {
     var stage = getPlayer().stage
-    return Math.floor(stage / 5) * 5 + 5
+    return Math.floor((stage * stage) / 2) + 5
 }
 
 function givePlayerXP() {
     var player = getPlayer()
-    player.xp += Math.floor(player.stage / 5) * 5 + 1
+    player.xp += getXPUntilNextLevel(player.stage) / 5
     player.enemiesLeftOnStage -= 1
     setPlayer(player)
 }
 
 function getXPUntilNextLevel(level) {
-    return Math.floor((level * level) / 5) + 5
+    return Math.round( 0.04 * (Math.pow(level, 3)) + 0.8 * (level*level) + 2 * level)
+    // return Math.floor((level * level) / 5) + 5
 }
 
 function drawEnemy() {
@@ -476,6 +487,8 @@ function drawStageText() {
 
 function promptUpdateStats() {
     if (getPlayer().ap > 0) {
+        var player = getPlayer()
+
         context.beginPath()
         context.fillStyle = "rgb(255, 215, 0, 0.6)"
         context.rect(90, 90, 150, 100)
@@ -498,12 +511,24 @@ function promptUpdateStats() {
         context.fillText("+", 210, 142)
         context.fillText("+", 210, 177)
         context.closePath()
+
+        if (mouseX > 200 && mouseX < 230 && mouseY > 125 && mouseY < 145 && click) {
+            player.attack += 1
+            player.ap -= 1
+        }
+        else if (mouseX > 200 && mouseX < 230 && mouseY > 160 && mouseY < 180 && click) {
+            player.luck += 1
+            player.ap -= 1
+        }
+        setPlayer(player)
     }
 }
 
 var playerSlashes = []
 var slashImg = new Image(150, 220)
 slashImg.src = "slash.png"
+var megaSlashImg = new Image(150, 320)
+megaSlashImg.src = "megaSlash.png"
 function createSlash() {
     var slash = {
         img: slashImg,
@@ -513,13 +538,29 @@ function createSlash() {
     playerSlashes.push(slash)
 }
 
+function createMegaSlash() {
+    var slash = {
+        img: megaSlashImg,
+        x: 150,
+        y: 180,
+        megaSlash: true
+    }
+    playerSlashes.push(slash)
+}
+
 function drawSlashes() {
     playerSlashes.forEach((slash, i) => {
         context.drawImage(slash.img, slash.x, slash.y)
         slash.x += 20
         if (slash.x > 600) {
-            dealDamage()
             playerSlashes.splice(i, 1)
+
+            if (slash.megaSlash) {
+                dealDamage();dealDamage();dealDamage();dealDamage();dealDamage();
+            }
+            else {
+                dealDamage()
+            }
         }
     })
 } 
