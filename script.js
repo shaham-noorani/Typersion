@@ -56,11 +56,18 @@ function setMouseXY(event) {
 function getRandomQuote() {
     quoteInputElement.value = ""
     lastShot = 0
+
+    var stage = getPlayer().stage, luck = getPlayer().luck
     
     loadJSON(function(response) {
         var json = JSON.parse(response)
         var quotes = json.quotes
-        var ran = Math.floor(Math.random() * quotes.length) + 1
+        var ran = Math.floor(Math.random() * quotes.length) + 1 
+        if (currentScreen == "goOut") {
+            var ran = Math.floor(stage * 1.5 - (Math.floor(Math.random() * 10) * -1 + 5) - luck)
+            if (ran < 0) { ran = 0 }
+            if (ran >= quotes.length) { ran = quotes.length - 1 }
+        }
         var quote = quotes[ran].quote
 
         quoteDisplayElement.innerHTML = ''
@@ -288,12 +295,14 @@ function goOut() {
     drawPlayer()
     drawEnemy()
     drawSlashes()
-    if (!quoteDisplayElement.innerText) {
-        getRandomQuote()
-    }
     handlePlayerObj()
     handleEnemyObj()
     drawEnemyHealthBar()
+    drawStageText()
+    promptUpdateStats()
+    if (!quoteDisplayElement.innerText) {
+        getRandomQuote()
+    }
 
     context.beginPath()
     context.fillStyle = backButtonColor
@@ -434,16 +443,62 @@ function drawEnemy() {
 }
 
 function drawEnemyHealthBar() {
+    var health = getEnemy().health
+
+    context.beginPath()
+    context.fillStyle = "rgb(100, 130, 180, 0.8)"
+    context.rect(610, 110, 150, 60)
+    context.fill()
+    context.closePath()
+    
     context.beginPath()
     context.fillStyle = "rgb(200, 0, 0)"
-    context.rect(620, 180, 140 * (getEnemy().health / calcEnemyHealth()), 20)
+    context.rect(620, 180, 140 * (health / calcEnemyHealth()), 20)
     context.fill()
+    context.fillStyle = "rgb(0, 0, 0)"
+    context.font = "normal 20px Lato"
+    context.fillText("Health: " + health + "/" + calcEnemyHealth(), 620, 160)
     context.closePath()
 }
 
 function drawStageText() {
-    var stage = getPlayer.stage
+    var stage = getPlayer().stage
+    var enemiesLeftString = getPlayer().enemiesLeftOnStage + "/5"
 
+    context.beginPath()
+    context.fillStyle = "rgb(0, 0, 0)"
+    context.font = "normal 20px Lato"
+    context.fillText("Stage: " + stage, 620, 130)
+    context.fillText(enemiesLeftString, 720, 130)
+    context.closePath()
+
+}
+
+function promptUpdateStats() {
+    if (getPlayer().ap > 0) {
+        context.beginPath()
+        context.fillStyle = "rgb(255, 215, 0, 0.6)"
+        context.rect(90, 90, 150, 100)
+        context.fill()
+        context.closePath()
+
+        context.beginPath()
+        context.fillStyle = "rgb(255, 255, 255)"
+        context.rect(200, 125, 30, 20)
+        context.rect(200, 160, 30, 20)
+        context.fill()
+        context.closePath()
+
+        context.beginPath()
+        context.fillStyle = "rgb(0, 0, 0)"
+        context.font = "normal 20px Lato"
+        context.fillText("AP: " + getPlayer().ap, 100, 115)
+        context.fillText("ATK: " + getPlayer().attack, 100, 145)
+        context.fillText("LUK: " + getPlayer().luck, 100, 175)
+        context.fillText("+", 210, 142)
+        context.fillText("+", 210, 177)
+        context.closePath()
+    }
 }
 
 var playerSlashes = []
