@@ -558,24 +558,24 @@ function drawSlashes() {
             playerSlashes.splice(i, 1)
 
             if (slash.megaSlash) {
-                dealDamage();dealDamage();dealDamage()
+                dealDamage(3)
             }
             else {
-                dealDamage()
+                dealDamage(1)
             }
         }
     })
 } 
 
 var damageMessages = []
-function dealDamage() {
+function dealDamage(multiplier) {
     var enemy = getEnemy(), player = getPlayer()
-    enemy.health -= player.attack
+    enemy.health -= player.attack * multiplier
     setEnemy(enemy)
     damageMessages.push({
         x: Math.floor(Math.random() * 120) + 620,
         y: 200,
-        text: player.attack
+        text: player.attack * multiplier
     })
 }
 
