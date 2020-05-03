@@ -1,7 +1,7 @@
 # Typersion
 ## Instructions for Installation
 1. Download or clone the repositoty (button at the top right of page).
-2. Download *Node.js* if you don't already have it.
+2. Download *Node.js* if you don't already have it (https://nodejs.org/en/download/).
 3. If you're on MacOS, simply drag the `launch-game.sh` file into the terminal.  
 4. If you're on windows, it'll be a little more tricky.
   * Go into your command prompt and type `npm install http-server -g`
