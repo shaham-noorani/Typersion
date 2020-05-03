@@ -310,6 +310,8 @@ function goOut() {
     drawEnemyHealthBar()
     drawStageText()
     promptUpdateStats()
+    indicateDamage()
+
     if (!quoteDisplayElement.innerText) {
         getRandomQuote()
     }
@@ -556,7 +558,7 @@ function drawSlashes() {
             playerSlashes.splice(i, 1)
 
             if (slash.megaSlash) {
-                dealDamage();dealDamage();dealDamage();dealDamage();dealDamage();
+                dealDamage();dealDamage();dealDamage()
             }
             else {
                 dealDamage()
@@ -565,10 +567,27 @@ function drawSlashes() {
     })
 } 
 
+var damageMessages = []
 function dealDamage() {
     var enemy = getEnemy(), player = getPlayer()
     enemy.health -= player.attack
     setEnemy(enemy)
+    damageMessages.push({
+        x: Math.floor(Math.random() * 120) + 620,
+        y: 200,
+        text: player.attack
+    })
+}
+
+function indicateDamage() {
+    context.beginPath()
+    context.font = "normal 20px Lato"
+    context.fillStyle = "rgb(240, 0, 0, 0.6)"
+    damageMessages.forEach((msg, i) => {
+        context.fillText(msg.text, msg.x, msg.y)
+        msg.y += 1
+        if (msg.y > canvas.height) { damageMessages.splice(i, 1) }
+    })
 }
 var lastShot = 0
 function keyPressed(event)
