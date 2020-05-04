@@ -1,0 +1,23 @@
+{
+  "name": "typersion",
+  "version": "1.0.0",
+  "description": "Typing RPG",
+  "main": "index.js",
+  "scripts": {
+    "test": "test"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/ShahamNoorani/Typersion.git"
+  },
+  "author": "Shaham Noorani",
+  "license": "ISC",
+  "bugs": {
+    "url": "https://github.com/ShahamNoorani/Typersion/issues"
+  },
+  "homepage": "https://github.com/ShahamNoorani/Typersion#readme",
+  "dependencies": {
+    "express": "^4.17.1",
+    "socket.io": "^2.3.0"
+  }
+}
