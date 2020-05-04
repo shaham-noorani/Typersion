@@ -57,36 +57,36 @@ function setMouseXY(event) {
     mouseY = event.clientY - 127 + mouseYAdditional
 }
 
+var quotes = ""
 var lastRan = -1
+
 function getRandomQuote() {
     quoteInputElement.value = ""
     lastShot = 0
 
     var stage = getPlayer().stage, luck = getPlayer().luck
     
-    loadJSON(function(response) {
-        var json = JSON.parse(response)
-        var quotes = json.quotes
-        var ran = Math.floor(Math.random() * quotes.length) + 1
-        if (currentScreen == "goOut") {
-            var ran = Math.floor(stage * 1.5 - (Math.floor(Math.random() * 15) * -1 + 7) - luck)
-            if (ran < 0) { ran = 0 }
-            if (ran >= quotes.length) { ran = quotes.length - 1 }
-            
-            if (lastRan == ran) {
-                getRandomQuote()
-            }
+    
+    var ran = Math.floor(Math.random() * quotes.length) + 1
+    if (currentScreen == "goOut") {
+        var ran = Math.floor(stage * 1.5 - (Math.floor(Math.random() * 15) * -1 + 7) - luck)
+        if (ran < 0) { ran = 0 }
+        if (ran >= quotes.length) { ran = quotes.length - 1 }
+        
+        if (lastRan == ran) {
+            getRandomQuote()
         }
-        var quote = quotes[ran].quote
-        lastRan = ran
+    }
+        
+    var quote = quotes[ran].quote
+    lastRan = ran
 
-        quoteDisplayElement.innerHTML = ''
-        quote.split('').forEach(char => {
-            const charSpan = document.createElement('span')
-            charSpan.innerText = char
-            quoteDisplayElement.appendChild(charSpan)
-        });
-    })
+    quoteDisplayElement.innerHTML = ''
+    quote.split('').forEach(char => {
+        const charSpan = document.createElement('span')
+        charSpan.innerText = char
+        quoteDisplayElement.appendChild(charSpan)
+    });
 }
 
 let startTime 
@@ -647,6 +647,9 @@ function init() {
     document.getElementById("resetWPMButton").style.display = "none"
     document.getElementById("backButton").style.display = "none"
     currentScreen = "title"
+
+    loadJSON((resp) =>  { var json = JSON.parse(resp); quotes = json.quotes })
+
     title()
 }
 
