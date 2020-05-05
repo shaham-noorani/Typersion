@@ -62,7 +62,7 @@ var quotes = ""
 function getRandomQuote() {
     quoteInputElement.value = ""
     var ran = Math.floor(Math.random() * quotes.length) + 1
-    
+
     if (currentScreen == "goOut") {
         lastShot = 0
         var stage = getPlayer().stage, luck = getPlayer().luck
@@ -469,6 +469,11 @@ function drawEnemyHealthBar() {
     context.fillStyle = "rgb(200, 0, 0)"
     context.rect(620, 180, 140 * (health / calcEnemyHealth()), 20)
     context.fill()
+
+    context.fillStyle = "rgb(200, 0, 0, 0.2)"
+    context.rect(620, 180, 140, 20)
+    context.fill()
+
     context.fillStyle = "rgb(0, 0, 0)"
     context.font = "normal 20px Lato"
     context.fillText("Health: " + health + "/" + calcEnemyHealth(), 620, 160)
@@ -489,6 +494,11 @@ function drawPlayerXPBar() {
     context.fillStyle = "rgb(66, 155, 245)"
     context.rect(390, 320, 140 * (xp / xpUntilNextLevel), 20)
     context.fill()
+
+    context.fillStyle = "rgb(66, 155, 245, 0.6)"
+    context.rect(390, 320, 140, 20)
+    context.fill()
+
     context.fillStyle = "rgb(0, 0, 0)"
     context.font = "normal 20px Lato"
     context.fillText("XP: " + xp + "/" + xpUntilNextLevel, 270, 338)
@@ -615,7 +625,7 @@ function indicateDamage() {
 
 function indicateXP() {
     context.beginPath()
-    context.font = "normal 20px Lato"
+    context.font = "normal 30px Lato"
     context.fillStyle = "rgb(0, 0, 200, 0.6)"
     xpMessages.forEach((msg, i) => {
         context.fillText(msg.text, msg.x, msg.y)
