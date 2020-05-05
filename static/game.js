@@ -461,7 +461,7 @@ function drawEnemyHealthBar() {
 
     context.beginPath()
     context.fillStyle = "rgb(100, 130, 180, 0.8)"
-    context.rect(610, 110, 150, 60)
+    context.rect(610, 110, 160, 60)
     context.fill()
     context.closePath()
     
@@ -476,7 +476,7 @@ function drawEnemyHealthBar() {
 
     context.fillStyle = "rgb(0, 0, 0)"
     context.font = "normal 20px Lato"
-    context.fillText("Health: " + health + "/" + calcEnemyHealth(), 620, 160)
+    context.fillText("Health: " + health + "/" + calcEnemyHealth(), 615, 160)
     context.closePath()
 }
 
