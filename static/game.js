@@ -16,6 +16,10 @@ canvas.addEventListener('click', function(evt) {
 })
 
 quoteInputElement.addEventListener('input', () => {
+    if (!(currentScreen == "goOut" || currentScreen == "freePlay")) {
+        return
+    }
+
     var quoteArray = quoteDisplayElement.querySelectorAll('span')
     var playerInputArray = quoteInputElement.value.split('')
 
@@ -42,8 +46,9 @@ quoteInputElement.addEventListener('input', () => {
             correct = false
         }
     })
+    console.log(correct)
     
-    if (correct)
+    if (correct && playerInputArray.length > 0)
     {
         if (currentScreen == "goOut") {
             createMegaSlash()
@@ -95,9 +100,14 @@ function startAndRunTimer() {
     setInterval(() => {
         if (elapsedTime() != 0) {
             WPMElement.innerText = 
-                Math.floor((totalTypedWords + getTypedWords()) / getTimerTime() * 60)
+                Math.floor((totalTypedWords + getTypedWords()) / elapsedTime() * 60)
         }
     }, 100)
+}
+
+function resetWPM() {
+    getRandomQuote()
+    startAndRunTimer()
 }
 
 function elapsedTime() {
@@ -139,6 +149,7 @@ function backToTitle() {
     document.getElementById("resetWPMButton").style.display = "none"
     document.getElementById("backButton").style.display = "none"
     quoteDisplayElement.innerHTML = ''
+    quoteInputElement.value = ""
 
     currentScreen = "title"
     title()
