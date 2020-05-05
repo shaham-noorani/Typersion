@@ -58,28 +58,21 @@ function setMouseXY(event) {
 }
 
 var quotes = ""
-var lastRan = -1
 
 function getRandomQuote() {
     quoteInputElement.value = ""
-    lastShot = 0
-
-    var stage = getPlayer().stage, luck = getPlayer().luck
-    
-    
     var ran = Math.floor(Math.random() * quotes.length) + 1
+    
     if (currentScreen == "goOut") {
+        lastShot = 0
+        var stage = getPlayer().stage, luck = getPlayer().luck
         var ran = Math.floor(stage * 1.5 - (Math.floor(Math.random() * 15) * -1 + 7) - luck)
+
         if (ran < 0) { ran = 0 }
         if (ran >= quotes.length) { ran = quotes.length - 1 }
-        
-        if (lastRan == ran) {
-            getRandomQuote()
-        }
     }
         
     var quote = quotes[ran].quote
-    lastRan = ran
 
     quoteDisplayElement.innerHTML = ''
     quote.split('').forEach(char => {
@@ -311,6 +304,8 @@ function goOut() {
     drawStageText()
     promptUpdateStats()
     indicateDamage()
+    indicateXP()
+    drawPlayerXPBar()
 
     if (!quoteDisplayElement.innerText) {
         getRandomQuote()
@@ -437,10 +432,16 @@ function calcEnemyHealth() {
     return Math.floor((stage * stage) / 2) + 5
 }
 
+var xpMessages = []
 function givePlayerXP() {
     var player = getPlayer()
     player.xp += getXPUntilNextLevel(player.stage) / 5
     player.enemiesLeftOnStage -= 1
+    xpMessages.push({
+        x: Math.floor(Math.random() * 120) + 620,
+        y: 200,
+        text: Math.floor(getXPUntilNextLevel(player.stage) / 5)
+    })
     setPlayer(player)
 }
 
@@ -472,6 +473,28 @@ function drawEnemyHealthBar() {
     context.font = "normal 20px Lato"
     context.fillText("Health: " + health + "/" + calcEnemyHealth(), 620, 160)
     context.closePath()
+}
+
+function drawPlayerXPBar() {
+    var player = getPlayer()
+    var xp = Math.floor(player.xp), xpUntilNextLevel = player.xpUntilNextLevel, level = player.level
+
+    context.beginPath()
+    context.fillStyle = "rgb(80, 110, 160, 0.8)"
+    context.rect(260, 290, 300, 60)
+    context.fill()
+    context.closePath()
+    
+    context.beginPath()
+    context.fillStyle = "rgb(66, 155, 245)"
+    context.rect(390, 320, 140 * (xp / xpUntilNextLevel), 20)
+    context.fill()
+    context.fillStyle = "rgb(0, 0, 0)"
+    context.font = "normal 20px Lato"
+    context.fillText("XP: " + xp + "/" + xpUntilNextLevel, 270, 338)
+    context.fillText("Lvl: " + level, 270, 315)
+    context.closePath()
+
 }
 
 function drawStageText() {
@@ -586,9 +609,21 @@ function indicateDamage() {
     damageMessages.forEach((msg, i) => {
         context.fillText(msg.text, msg.x, msg.y)
         msg.y += 1
-        if (msg.y > canvas.height) { damageMessages.splice(i, 1) }
+        if (msg.y > canvas.height + 50) { damageMessages.splice(i, 1) }
     })
 }
+
+function indicateXP() {
+    context.beginPath()
+    context.font = "normal 20px Lato"
+    context.fillStyle = "rgb(0, 0, 200, 0.6)"
+    xpMessages.forEach((msg, i) => {
+        context.fillText(msg.text, msg.x, msg.y)
+        msg.y += 1
+        if (msg.y > canvas.height + 50) { xpMessages.splice(i, 1) }
+    })
+}
+
 var lastShot = 0
 function keyPressed(event)
 {
