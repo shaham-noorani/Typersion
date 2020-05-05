@@ -66,7 +66,7 @@ function getRandomQuote() {
     if (currentScreen == "goOut") {
         lastShot = 0
         var stage = getPlayer().stage, luck = getPlayer().luck
-        var ran = Math.floor(stage * 1.5 - (Math.floor(Math.random() * 15) * -1 + 7) - luck)
+        var ran = Math.floor(stage * 1.5 - (Math.floor(Math.random() * 20) * -1 + 10) - luck)
 
         if (ran < 0) { ran = 0 }
         if (ran >= quotes.length) { ran = quotes.length - 1 }
