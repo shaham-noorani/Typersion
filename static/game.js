@@ -46,7 +46,6 @@ quoteInputElement.addEventListener('input', () => {
             correct = false
         }
     })
-    console.log(correct)
     
     if (correct && playerInputArray.length > 0)
     {
@@ -150,6 +149,7 @@ function backToTitle() {
     document.getElementById("backButton").style.display = "none"
     quoteDisplayElement.innerHTML = ''
     quoteInputElement.value = ""
+    quoteInputElement.readOnly = true
 
     currentScreen = "title"
     title()
@@ -194,6 +194,8 @@ function title() {
         if (click) {
             freePlayButtonColor = "rgb(200, 200, 200)"
             currentScreen = "freePlay"
+            quoteInputElement.readOnly = false
+            quoteInputElement.focus()
             freePlay()
         }
     }
@@ -285,6 +287,8 @@ function adventure() {
         if (click) {
             click = false
             currentScreen = "goOut"
+            quoteInputElement.readOnly = false
+            quoteInputElement.focus()
             goOut()
         }
     }
@@ -727,6 +731,7 @@ function init() {
     document.getElementById("resetWPMButton").style.display = "none"
     document.getElementById("backButton").style.display = "none"
     currentScreen = "title"
+    quoteInputElement.readOnly = true
 
     loadJSON((resp) =>  { var json = JSON.parse(resp); quotes = json.quotes })
 
