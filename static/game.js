@@ -18,12 +18,14 @@ canvas.addEventListener('click', function(evt) {
 quoteInputElement.addEventListener('input', () => {
     var quoteArray = quoteDisplayElement.querySelectorAll('span')
     var playerInputArray = quoteInputElement.value.split('')
+
     if (playerInputArray[0] == " ") {
         quoteInputElement.value = ""
         playerInputArray = ""
     }
     var correct = true
     
+    // checks player input to see if quote is typed correctly
     quoteArray.forEach((charSpan, index) => {
         var char = playerInputArray[index]
         if (char == null) {
@@ -58,7 +60,6 @@ function setMouseXY(event) {
 }
 
 var quotes = ""
-
 function getRandomQuote() {
     quoteInputElement.value = ""
     var ran = Math.floor(Math.random() * quotes.length) + 1
@@ -66,7 +67,7 @@ function getRandomQuote() {
     if (currentScreen == "goOut") {
         lastShot = 0
         var stage = getPlayer().stage, luck = getPlayer().luck
-        var ran = Math.floor(stage * 1.5 - (Math.floor(Math.random() * 20) * -1 + 10) - luck)
+        var ran = Math.floor(stage - (Math.floor(Math.random() * 20) * -1 + 10) - luck)
 
         if (ran < 0) { ran = 0 }
         if (ran >= quotes.length) { ran = quotes.length - 1 }
@@ -74,6 +75,7 @@ function getRandomQuote() {
         
     var quote = quotes[ran].quote
 
+    // creates an array of spans that makeup the quote
     quoteDisplayElement.innerHTML = ''
     quote.split('').forEach(char => {
         const charSpan = document.createElement('span')
@@ -85,19 +87,20 @@ function getRandomQuote() {
 let startTime 
 var totalTypedWords
 function startAndRunTimer() {
-    getRandomQuote()
     WPMElement.innerText = 0
     startTime = new Date()
     totalTypedWords = 0
+
+    // updates WPM every 1/10 sec.
     setInterval(() => {
-        if (getTimerTime() != 0) {
+        if (elapsedTime() != 0) {
             WPMElement.innerText = 
                 Math.floor((totalTypedWords + getTypedWords()) / getTimerTime() * 60)
         }
     }, 100)
 }
 
-function getTimerTime() {
+function elapsedTime() {
     return Math.floor((new Date - startTime) / 1000)
 }
 
@@ -128,12 +131,13 @@ function loadJSON(callback) {
 }
 
 function backToTitle() {
+
+    // resets styling to title config.
     canvas.style.display = "flex"
     WPMElement.style.display = "none"
     document.getElementById("quoteContainer").style.bottom = "1rem"
     document.getElementById("resetWPMButton").style.display = "none"
     document.getElementById("backButton").style.display = "none"
-
     quoteDisplayElement.innerHTML = ''
 
     currentScreen = "title"
@@ -148,6 +152,7 @@ function title() {
     }
     context.clearRect(0, 0, canvas.width, canvas.height)
 
+    // create adventure and freeplay button boxes
     context.beginPath()
     context.fillStyle = adventureButtonColor
     context.rect(180, 220, 150, 40)
@@ -160,6 +165,7 @@ function title() {
     context.fill()
     context.closePath()
 
+    // write title text + text for both buttons
     context.beginPath()
     context.fillStyle = "rgb(40, 70, 120)"
     context.font = "normal 40px Lato"
@@ -170,6 +176,7 @@ function title() {
     context.fillText("Freeplay", 520, 250)
     context.closePath()
 
+    // check if freeplay button is being hovered over
     if (mouseX > 480 && mouseX < 480 + 150 && mouseY > 220 & mouseY < 220 + 40) {
         freePlayButtonColor = "rgb(255, 255, 255)"
 
@@ -179,6 +186,7 @@ function title() {
             freePlay()
         }
     }
+    // check if adventure button is being hovered over
     else if (mouseX > 180 && mouseX < 180 + 150 && mouseY > 220 & mouseY < 220 + 40) {
         adventureButtonColor = "rgb(255, 255, 255)"
         
@@ -210,6 +218,7 @@ function adventure() {
 
     context.clearRect(0, 0, canvas.width, canvas.height)
 
+    // create back, go out, stats, and inventory button boxes
     context.beginPath()
     context.fillStyle = backButtonColor
     context.rect(80, 20, 70, 30)
@@ -234,6 +243,7 @@ function adventure() {
     context.fill()
     context.closePath()
 
+    // write title text + text for 4 buttons
     context.beginPath()
     context.fillStyle = "rgb(40, 70, 120)"
     context.font = "normal 40px Lato"
@@ -248,15 +258,16 @@ function adventure() {
     context.closePath()
     context.closePath()
 
-    if (mouseX > 60 && mouseX < 60 + 70 && mouseY > 20 & mouseY < 20 + 30) {
+    // check if back button is being hovered over
+    if (mouseX > 80 && mouseX < 80 + 70 && mouseY > 20 & mouseY < 20 + 40) {
         backButtonColor = "rgb(255, 255, 255)" 
 
         if (click) {
             currentScreen = "title"
-            quoteDisplayElement.innerHTML = ''
             title()
         }
     }
+    // check if go out button is being hovered over
     else if (mouseX > 80 && mouseX < 80 + 150 && mouseY > 220 & mouseY < 220 + 40) {
         goOutButtonColor = "rgb(255, 255, 255)"
 
@@ -266,12 +277,14 @@ function adventure() {
             goOut()
         }
     }
+    // check if stats button is being hovered over
     else if (mouseX > 330 && mouseX < 330 + 150 && mouseY > 220 & mouseY < 220 + 40) {
         statsButtonColor = "rgb(255, 255, 255)"
         
         if (click) {
         }
     }
+    // check if inventory button is being hovered over
     else if (mouseX > 580 && mouseX < 580 + 150 && mouseY > 220 & mouseY < 220 + 40) {
         inventoryButtonColor = "rgb(255, 255, 255)"
         
@@ -339,15 +352,16 @@ function goOut() {
     click = false
 }
 
+playerImg = new Image(200, 80)
+playerImg.src = "static/player.png"
 function drawPlayer() {
-    playerImg = new Image(200, 80)
-    playerImg.src = "static/player.png"
     context.drawImage(playerImg, 100, 220)
 }
 
 function handlePlayerObj() {
     var player = getPlayer()
     var updatePlayer = false
+
     if (player == null || player == "undefined") {
         player = {
             level: 1,
@@ -362,6 +376,8 @@ function handlePlayerObj() {
         }
         updatePlayer = true
     }
+
+    // check for level up
     if (player.xp >= player.xpUntilNextLevel) {
         player.xp -= player.xpUntilNextLevel
         player.level += 1
@@ -369,6 +385,8 @@ function handlePlayerObj() {
         player.xpUntilNextLevel = getXPUntilNextLevel(player.level)
         updatePlayer = true
     }
+
+    // check for increment stage
     if (player.enemiesLeftOnStage <= 0) {
         player.stage += 1
         player.enemiesLeftOnStage = 5
@@ -380,37 +398,30 @@ function handlePlayerObj() {
 
 function handleEnemyObj() {
     var enemy = getEnemy()
-    if (enemy == null) {
+    var updateEnemy = false
+
+    if (enemy == null || enemy == "undefined") {
         enemy = {
             health: 5,
         }
-        setEnemy(enemy)
+        updateEnemy = true
     }
+
     if (enemy.health <= 0) {
         enemy.health = calcEnemyHealth()
-        setEnemy(enemy)
+        updateEnemy = true
         givePlayerXP()
     }
+
+    if (updateEnemy) { setEnemy(enemy) }
 }
 
 function getPlayer() {
-    var result
+    var result = localStorage.getItem("player")
     try {
-        result = JSON.parse(localStorage.getItem("player"))
+        result = JSON.parse(result)
     } catch (error) {
-        var player = {
-            level: 1,
-            xp: 0,
-            xpUntilNextLevel: getXPUntilNextLevel(1),
-            ap: 0,
-            attack: 1,
-            luck: 1,
-            stage: 1,
-            enemiesLeftOnStage: 5,
-            inventory: []
-        }
-        setPlayer(player)
-        result = JSON.parse(localStorage.getItem("player"))
+        console.error(error)
     } 
     return result
 }
@@ -435,24 +446,23 @@ function calcEnemyHealth() {
 var xpMessages = []
 function givePlayerXP() {
     var player = getPlayer()
-    player.xp += getXPUntilNextLevel(player.stage) / 5
+    player.xp += Math.floor(getXPUntilNextLevel(player.stage) / 5)
     player.enemiesLeftOnStage -= 1
     xpMessages.push({
         x: Math.floor(Math.random() * 120) + 620,
         y: 200,
-        text: Math.floor(getXPUntilNextLevel(player.stage) / 5)
+        text: formatNumber(Math.floor(getXPUntilNextLevel(player.stage) / 5))
     })
     setPlayer(player)
 }
 
 function getXPUntilNextLevel(level) {
     return Math.round( 0.04 * (Math.pow(level, 3)) + 0.8 * (level*level) + 2 * level)
-    // return Math.floor((level * level) / 5) + 5
 }
 
+enemyImg = new Image(200, 80)
+enemyImg.src = "static/cyclops.png"
 function drawEnemy() {
-    enemyImg = new Image(200, 80)
-    enemyImg.src = "static/cyclops.png"
     context.drawImage(enemyImg, 650, 220)
 }
 
@@ -475,8 +485,8 @@ function drawEnemyHealthBar() {
     context.fill()
 
     context.fillStyle = "rgb(0, 0, 0)"
-    context.font = "normal 20px Lato"
-    context.fillText("Health: " + health + "/" + calcEnemyHealth(), 615, 160)
+    context.font = "normal 15px Lato"
+    context.fillText("Health: " + formatNumber(health) + "/" + formatNumber(calcEnemyHealth()), 620, 155)
     context.closePath()
 }
 
@@ -492,17 +502,17 @@ function drawPlayerXPBar() {
     
     context.beginPath()
     context.fillStyle = "rgb(66, 155, 245)"
-    context.rect(390, 320, 140 * (xp / xpUntilNextLevel), 20)
+    context.rect(405, 320, 140 * (xp / xpUntilNextLevel), 20)
     context.fill()
 
     context.fillStyle = "rgb(66, 155, 245, 0.6)"
-    context.rect(390, 320, 140, 20)
+    context.rect(405, 320, 140, 20)
     context.fill()
 
     context.fillStyle = "rgb(0, 0, 0)"
-    context.font = "normal 20px Lato"
-    context.fillText("XP: " + xp + "/" + xpUntilNextLevel, 270, 338)
-    context.fillText("Lvl: " + level, 270, 315)
+    context.font = "normal 15px Lato"
+    context.fillText("XP: " + formatNumber(xp) + "/" + formatNumber(xpUntilNextLevel), 270, 335)
+    context.fillText("Lvl: " + formatNumber(level), 270, 312)
     context.closePath()
 
 }
@@ -608,7 +618,7 @@ function dealDamage(multiplier) {
     damageMessages.push({
         x: Math.floor(Math.random() * 120) + 620,
         y: 200,
-        text: player.attack * multiplier
+        text: formatNumber(player.attack * multiplier)
     })
 }
 
@@ -632,6 +642,20 @@ function indicateXP() {
         msg.y += 1
         if (msg.y > canvas.height + 50) { xpMessages.splice(i, 1) }
     })
+}
+
+function formatNumber(val) {
+    var result = val
+    if (val >= 1000000000) {
+        result = (Math.floor(val / 10000000) / 100).toFixed(2) + "B"
+    }
+    else if (val >= 1000000) {
+        result = (Math.floor(val / 10000) / 100).toFixed(2) + "M"
+    }
+    else if (val >= 1000) {
+        result = (Math.floor(val / 10) / 100).toFixed(2) + "K"
+    }
+    return result
 }
 
 var lastShot = 0
