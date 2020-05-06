@@ -21,12 +21,20 @@ const PORT = process.env.PORT || 8000;
 app.set('port', PORT);
 
 // Importing static files
-app.use("static", express.static(path.join(__dirname, 'client/static')))
+app.use("/static", express.static(path.join(__dirname, '../client/static')))
 
 // Routing
 app.get('/', function(request, response) {
   response.sendFile(path.join(__dirname, '../client/static/index.html'));
 });
+
+/*
+app.use('/static', express.static(__dirname + '/static'));
+// Routing
+app.get('/', function(request, response) {
+  response.sendFile(path.join(__dirname, 'index.html'));
+});
+*/
 
 //Init game
 initGame()
