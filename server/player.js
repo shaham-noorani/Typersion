@@ -81,7 +81,7 @@ function levelUpStat(stat) {
 
 function init() {
     getPlayerFromJSON()
-    applyPlayerEquipment()
+    // applyPlayerEquipment()
 }
 
 module.exports = {

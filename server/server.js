@@ -6,10 +6,10 @@ var socketIO = require('socket.io');
 var fs = require('fs')
 
 // Adjacent Files
-// var Player = require("./player")
-var Enemy = require("./enemy").default
-var Items = require("./items").default
-var helper = require("./helper").default
+var helper = require("./helper")
+var Player = require("./player.js")
+var Enemy = require("./enemy")
+var Items = require("./items")
 
 // Server
 var app = express();
@@ -21,7 +21,7 @@ const PORT = process.env.PORT || 8000;
 app.set('port', PORT);
 
 // Importing static files
-app.use('../client', express.static(__dirname + '/static'));
+app.use("static", express.static(path.join(__dirname, 'client/static')))
 
 // Routing
 app.get('/', function(request, response) {
@@ -50,9 +50,9 @@ function initGame() {
 }
 
 function emitDataForClient() {
-  socket.emit("quotes", helper.readQuotesJSON())
-  socket.emit("player", Player.getPlayer())
-  socket.emit("enemy", Enemy.getEnemy())
+  io.emit("quotes", helper.readQuotesJSON())
+  io.emit("player", Player.getPlayer())
+  io.emit("enemy", Enemy.getEnemy())
 }
 
 function listenForEmitsFromClient() {

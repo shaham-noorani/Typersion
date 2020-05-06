@@ -1,4 +1,5 @@
-var Player = require("player")
+var Player = require("./player.js")
+var fs = require("fs")
 
 var itemTierNames
 
