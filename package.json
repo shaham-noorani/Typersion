@@ -2,10 +2,10 @@
   "name": "typersion",
   "version": "1.0.0",
   "description": "Typing RPG",
-  "main": "index.js",
+  "main": "server/server.js",
   "scripts": {
     "test": "test",
-    "start": "node index.js"
+    "start": "node server/server.js"
   },
   "repository": {
     "type": "git",

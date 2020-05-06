@@ -1,0 +1,6 @@
+{
+    "enemy": {
+        "health": 5,
+        "maxHealth": 5
+    }
+}
