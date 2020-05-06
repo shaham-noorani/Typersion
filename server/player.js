@@ -87,3 +87,5 @@ function init() {
 module.exports = {
     getPlayer, setPlayer, givePlayerXP, levelUpStat, dealDamage, updatePlayerJSON, init
 }
+
+console.log(Helper.formatNumber(1000))

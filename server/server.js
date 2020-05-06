@@ -6,10 +6,10 @@ var socketIO = require('socket.io');
 var fs = require('fs')
 
 // Adjacent Files
-var Player = require("./player")
-var Enemy = require("./enemy")
-var Items = require("./items")
-var helper = require("./helper")
+var Player = require("./player.js")
+var Enemy = require("./enemy.js")
+var Items = require("./items.js")
+var helper = require("./helper.js")
 
 // Server
 var app = express();
@@ -33,10 +33,8 @@ initGame()
 
 // All of the emits for the client
 
-// setInterval(() => {
 emitDataForClient()
 listenForEmitsFromClient()
-// }, 1000);
 
 // Starts the server.
 server.listen(PORT, function() {
