@@ -1,0 +1,14 @@
+{
+    "rareItems": {
+        "tier1": [
+            { "name": "Adventurer's Sword", "type": "sword", "effect": "doubleAttack 1.1"}
+        ],
+        "tier2": [
+            { "name": "Adventurer's Chestplate", "type": "chestplate", "effect": "attack 1.1"}
+        ]
+    },
+    "itemTierNames": {
+        "names": ["Bronze", "Silver", "Gold", "Platinum", "Paladium", "Mythril", "Dragon", " Hero's"]
+    }
+}
+

@@ -10,6 +10,8 @@ var server = http.Server(app);
 var io = socketIO(server);
 
 var quotes = ""
+var itemTierNames = ""
+var rareItems = ""
 
 const PORT = process.env.PORT || 8000;
 
@@ -22,13 +24,19 @@ app.get('/', function(request, response) {
 
 fs.readFile("static/quotes.json" , (err, data) => {
   if (err) { console.error(err) }
-  var json = JSON.parse(data)
-  quotes = json.quotes
+  quotes = JSON.parse(data).quotes
 })
 
+fs.readFile("static/items.json" , (err, data) => {
+  if (err) { console.error(err) }
+  itemTierNames = JSON.parse(data).itemTierNames.names
+  rareItems = JSON.parse(data).rareItems
+})
 
 setInterval(() => {
   io.emit("quotes", quotes);
+  io.emit("itemTierNames", itemTierNames)
+  io.emit("rareItems", rareItems)
 }, 1000);
 
 // Starts the server.

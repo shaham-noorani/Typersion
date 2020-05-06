@@ -274,6 +274,7 @@ function adventure() {
             currentScreen = "goOut"
             quoteInputElement.readOnly = false
             quoteInputElement.focus()
+            applyPlayerEquipment()
             goOut()
         }
     }
@@ -372,7 +373,8 @@ function handlePlayerObj() {
             luck: 1,
             stage: 1,
             enemiesLeftOnStage: 5,
-            inventory: []
+            inventory: [],
+            equipment: [],
         }
         updatePlayer = true
     }
@@ -396,6 +398,20 @@ function handlePlayerObj() {
     if (setPlayer) { setPlayer(player) }
 }
 
+function applyPlayerEquipment() {
+    var player = getPlayer()
+
+    player.equipment.forEach((item) => {
+        var stat = item.effect.split(" ")[0]
+        var mult = Number(item.effect.split(" ")[1])
+
+        if(stat == "luck") { player.luck = Math.floor(player.luck * mult) }
+        if(stat == "attack") { player.attack = Math.floor(player.attack * mult) }
+    })
+
+    setPlayer(player)
+}
+
 function handleEnemyObj() {
     var enemy = getEnemy()
     var updateEnemy = false
@@ -411,6 +427,7 @@ function handleEnemyObj() {
         enemy.health = calcEnemyHealth()
         updateEnemy = true
         givePlayerXP()
+        rollDropItem()
     }
 
     if (updateEnemy) { setEnemy(enemy) }
@@ -658,6 +675,67 @@ function formatNumber(val) {
     return result
 }
 
+var itemTierNames
+var rareItems
+function rollDropItem() {
+    var player = getPlayer()
+    var stage = player.stage, luck = player.luck
+
+    var rng = Math.floor(Math.random() * 10) + 1
+    rng += luck/8
+    rng -= stage/60
+    console.log("rng: " + rng)
+
+    if (rng >= 9.5) {
+        givePlayerRareItem()
+    }
+    else if (rng >= 8) {
+        givePlayerNormalItem()
+    }
+}
+
+function givePlayerNormalItem() {
+    console.log("lmao")
+    var rng = Math.floor(Math.random() * 3) + 1
+    var tier = Math.floor(getPlayer().stage-1 / 5) + 1
+    var player = getPlayer()
+
+    var item = {
+        name: "",
+        type: "",
+        effect: ""
+    }
+
+    switch (rng) {
+        case 1:
+            console.log("Sword")
+            item.name = itemTierNames[tier-1] + " Sword"
+            item.type = "sword"
+            item.effect = "attack " + (1 + tier*0.05)
+
+        case 2:
+            console.log("Gloves")
+            item.name = itemTierNames[tier-1] + " Gloves"
+            item.type = "gloves"
+            item.effect = "attack " + (1 + tier*0.05)
+        
+        case 3:
+            console.log("Ring")
+            item.name = itemTierNames[tier-1] + " Ring"
+            item.type = "ring"
+            item.effect = "luck " + (1 + tier*0.05)
+    }
+    console.log(item)
+    player.inventory.push(item)
+
+    setPlayer(player)
+    
+}
+
+function givePlayerRareItem() {
+    return
+}
+
 var lastShot = 0
 function keyPressed(event)
 {
@@ -721,6 +799,12 @@ function init() {
     var socket = io();
     socket.on('quotes', (data) => {
         quotes = data
+    });
+    socket.on('itemTierNames', (data) => {
+        itemTierNames = data
+    });
+    socket.on('rareItems', (data) => {
+        rareItems = data
     });
 
     title()
