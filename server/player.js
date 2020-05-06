@@ -1,6 +1,6 @@
 var fs = require('fs')
-var Helper = require("./helper")
-var Enemy = require("./enemy")
+var Helper = require("./helper").default
+var Enemy = require("./enemy").default
 // var items = require("./items")
 
 var player
@@ -87,5 +87,3 @@ function init() {
 module.exports = {
     getPlayer, setPlayer, givePlayerXP, levelUpStat, dealDamage, updatePlayerJSON, init
 }
-
-console.log(Helper.formatNumber(1000))

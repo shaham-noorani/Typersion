@@ -1,5 +1,5 @@
-var Player = require("./player")
-var Items = require("./items")
+var Player = require("./player").default
+var Items = require("./items").default
 var fs = require("fs") 
 
 var enemy

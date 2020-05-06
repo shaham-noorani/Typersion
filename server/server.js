@@ -7,9 +7,9 @@ var fs = require('fs')
 
 // Adjacent Files
 var Player = require("./player.js")
-var Enemy = require("./enemy.js")
-var Items = require("./items.js")
-var helper = require("./helper.js")
+var Enemy = require("./enemy.js").default
+var Items = require("./items.js").default
+var helper = require("./helper.js").default
 
 // Server
 var app = express();
