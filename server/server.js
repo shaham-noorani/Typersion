@@ -6,10 +6,10 @@ var socketIO = require('socket.io');
 var fs = require('fs')
 
 // Adjacent Files
-var Player = require("./player.js")
-var Enemy = require("./enemy.js").default
-var Items = require("./items.js").default
-var helper = require("./helper.js").default
+// var Player = require("./player")
+var Enemy = require("./enemy").default
+var Items = require("./items").default
+var helper = require("./helper").default
 
 // Server
 var app = express();
