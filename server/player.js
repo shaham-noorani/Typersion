@@ -17,6 +17,7 @@ function getPlayerFromJSON() {
     fs.readFile("server/static/player.json" , (err, data) => {
         if (err) { console.error(err) }
         player = JSON.parse(data).player
+        // console.log(player)
     })
 }
 
@@ -85,5 +86,5 @@ function init() {
 }
 
 module.exports = {
-    getPlayer, setPlayer, givePlayerXP, levelUpStat, dealDamage, updatePlayerJSON, init
+    getPlayer, setPlayer, givePlayerXP, levelUpStat, dealDamage, updatePlayerJSON, init, getPlayerFromJSON
 }

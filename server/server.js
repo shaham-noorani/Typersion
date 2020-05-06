@@ -58,8 +58,12 @@ function initGame() {
 }
 
 function emitDataForClient() {
+  console.log(helper.readQuotesJSON())
   io.emit("quotes", helper.readQuotesJSON())
   io.emit("player", Player.getPlayer())
+  Player.init()
+  console.log(Player.getPlayerFromJSON())
+  console.log(Player.getPlayer())
   io.emit("enemy", Enemy.getEnemy())
 }
 

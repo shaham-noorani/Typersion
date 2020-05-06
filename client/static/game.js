@@ -608,6 +608,9 @@ function freePlay() {
 var mouseXAdditional = 0
 var mouseYAdditional = 0
 function init() {
+    
+    handleSockets()
+
     if (screen.height > 800) {
         canvas.classList.add("taller-screen")
         WPMElement.classList.add("taller-screen")

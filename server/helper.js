@@ -1,4 +1,7 @@
 var fs = require("fs")
+var path = require('path')
+
+var quotes = readQuotesJSON()
 
 function formatNumber(val) {
     var result = val
@@ -15,12 +18,16 @@ function formatNumber(val) {
 }
 
 function readQuotesJSON() {
-    fs.readFile("client/static/quotes.json" , (err, data) => {
+    var result
+    fs.readFile(path.join(__dirname, "../client/static/quotes.json") , (err, data) => {
         if (err) { console.error(err) }
-         return JSON.parse(data).quotes
-    })
+            var asJSON = JSON.parse(data).quotes
+            return asJSON
+            result = JSON//.stringify(asJSON)
+        })
+    return result
 }
 
 module.exports = {
-    formatNumber, readQuotesJSON
+    formatNumber, readQuotesJSON, quotes
 }
