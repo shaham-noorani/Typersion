@@ -13,7 +13,10 @@ function getEnemyFromJSON() {
 
 function updateEnemyJSON() {
     if (!enemy) { return }
-    fs.writeFile('server/static/enemy.json', JSON.stringify(enemy), (err) => {
+    var json = {
+        enemy: enemy
+    }
+    fs.writeFile('server/static/enemy.json', JSON.stringify(json), (err) => {
         if (err) throw err;
     });
 }

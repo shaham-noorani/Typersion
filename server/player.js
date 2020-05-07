@@ -24,7 +24,10 @@ function getPlayerFromJSON() {
 
 function updatePlayerJSON() {
     if (!player) { return }
-    fs.writeFile('server/static/player.json', JSON.stringify(player), (err) => {
+    var json = {
+        player: player
+    }
+    fs.writeFile('server/static/player.json', JSON.stringify(json), (err) => {
         if (err) throw err;
     });
 }

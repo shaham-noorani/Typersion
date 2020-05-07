@@ -473,10 +473,10 @@ function promptUpdateStats() {
         context.closePath()
 
         if (mouseX > 200 && mouseX < 230 && mouseY > 125 && mouseY < 145 && click) {
-            thingsToEmit.push("playerLevelUp attack")
+            thingsToEmit.push("levelUpPlayer attack")
         }
         else if (mouseX > 200 && mouseX < 230 && mouseY > 160 && mouseY < 180 && click) {
-            thingsToEmit.push("playerLevelUp luck")
+            thingsToEmit.push("levelUpPlayer luck")
         }
     }
 }
@@ -620,9 +620,13 @@ var mouseXAdditional = 0
 var mouseYAdditional = 0
 function init() {
     
+    recieveDataFromServer()
+
     setInterval(() => {
-        handleSockets()
-    }, 1000)
+        sendDataToServer()
+    }, 1000 / 60)
+
+    // sendDataToServer()
 
     if (screen.height > 800) {
         canvas.classList.add("taller-screen")
@@ -639,23 +643,7 @@ function init() {
     title()
 }
 
-function handleSockets() {
-    socket.on('connection', () => {
-        console.log("client connect")
-        thingsToEmit.forEach((item, i) => {
-            var item = item.split(" ")
-            if (item[0] == "playerLevelUp") {
-                socket.emit("playerLevelUp", item[1], () => {
-                    thingsToEmit.splice(i, 1)
-                })
-            }
-            else if (item[0] == "dealDamage") {
-                socket.emit("dealDamage", Number(item[1]), () => {
-                    thingsToEmit.splice(i, 1)
-                })
-            }
-        })
-    })
+function recieveDataFromServer() {
     socket.on('quotes', (data) => {
         quotes = data
     });
@@ -665,6 +653,22 @@ function handleSockets() {
     socket.on('enemy', (data) => {
         enemy = data
     });
+}
+
+function sendDataToServer() {
+    thingsToEmit.forEach((item, i) => {
+        var items = item.split(" ")
+        if (items[0] == "levelUpPlayer") {
+            socket.emit("levelUpPlayer", items[1])                
+            thingsToEmit.splice(i, 1)
+        }
+        else if (items[0] == "dealDamage") {
+            socket.emit("dealDamage", Number(items[1]), () => {
+                thingsToEmit.splice(i, 1)
+            })
+        }
+    })
+    
 }
 
 init()

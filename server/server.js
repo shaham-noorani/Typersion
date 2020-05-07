@@ -54,15 +54,14 @@ function emitDataForClient() {
   io.emit("player", Player.getPlayer())
   io.emit("enemy", Enemy.getEnemy())
 }
-
+var count = 0
 function listenForEmitsFromClient() {
   io.on('connection', (socket) => {
-    socket.on('levelUpPlayer', (stat) => {
-      console.log("level up: " + stat)
-      Player.levelUpStat(stat)
-    })
     socket.on('dealDamage', (mult) => {
       Player.dealDamage(mult)
+    })
+    socket.on('levelUpPlayer', (stat) => {
+      Player.levelUpStat(stat)
     })
   })
 }
