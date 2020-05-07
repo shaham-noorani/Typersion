@@ -33,15 +33,7 @@ initGame()
 listenForEmitsFromClient()
 
 setInterval(() => {
-  emitDataForClient()
-
-  Player.updatePlayerJSON()
-  Enemy.updateEnemyJSON()
-}, 1000)
-
-setInterval(() => {
-  Player.updatePlayerJSON()
-  Enemy.updateEnemyJSON()
+  secondlyProcesses()
 }, 1000)
 
 // Starts the server.
@@ -65,7 +57,6 @@ function emitDataForClient() {
 
 function listenForEmitsFromClient() {
   io.on('connection', (socket) => {
-    console.log("connected")
     socket.on('levelUpPlayer', (stat) => {
       Player.levelUpStat(stat)
     })
@@ -74,4 +65,16 @@ function listenForEmitsFromClient() {
       Player.dealDamage(mult)
     })
   })
+}
+
+function secondlyProcesses() {
+  emitDataForClient()
+
+  // See if player or enemy need to be updates
+  Player.completeChecks()
+  Enemy.completeChecks()
+
+  // Save current state to json
+  // Player.updatePlayerJSON()
+  // Enemy.updateEnemyJSON()
 }

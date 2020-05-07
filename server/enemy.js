@@ -1,5 +1,5 @@
-var Player = require("./player").default
-var Items = require("./items").default
+var Player = require("./player.js")
+var Items = require("./items")
 var fs = require("fs") 
 
 
@@ -38,10 +38,14 @@ function calcEnemyHealth() {
     return Math.floor((stage * stage) / 2) + 5
 }
 
+function completeChecks() {
+    checkIfEnemyIsDead()
+}
+
 function init() {
     getEnemyFromJSON()
 }
 
 module.exports = {
-    init, getEnemy, setEnemy, enemy: getEnemyFromJSON(), updateEnemyJSON
+    init, getEnemy, setEnemy, enemy: getEnemyFromJSON(), updateEnemyJSON, completeChecks
 }

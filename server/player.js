@@ -67,7 +67,7 @@ function getXPUntilNextLevel(level) {
 
 function dealDamage(multiplier) {
     var enemy = Enemy.getEnemy()
-    var damage = getPlayer().stats.attack * getPlayer().equipmentEffects.attackMultiplier * multiplier
+    var damage = player.stats.attack * player.equipmentEffects.attackMultiplier * multiplier
     enemy.health -= damage
     Enemy.setEnemy(enemy)
 }
@@ -85,7 +85,7 @@ function completeChecks() {
 
 function init() {
     getPlayerFromJSON()
-    applyPlayerEquipment()
+    // applyPlayerEquipment()
 }
 
 module.exports = {
