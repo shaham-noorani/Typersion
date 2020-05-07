@@ -75,13 +75,12 @@ function getRandomQuote() {
 
     if (currentScreen == "goOut") {
         lastShot = 0
-        var stage = player.stage, luck = player.luck
+        var stage = player.stage, luck = player.stats.luck
         var ran = Math.floor(stage - (Math.floor(Math.random() * 20) * -1 + 10) - luck)
 
         if (ran < 0) { ran = 0 }
         if (ran >= quotes.length) { ran = quotes.length - 1 }
     }
-        
     var quote = quotes[ran].quote
 
     // creates an array of spans that makeup the quote
@@ -310,13 +309,25 @@ function goOut() {
     }
     context.clearRect(0, 0, canvas.width, canvas.height)
 
+    thingsToEmit.forEach((item, i) => {
+        var item = item.split(" ")
+        if (item[0] == "playerLevelUp") {
+            socket.emit("playerLevelUp", item[1])
+            thingsToEmit.splice(i, 1)
+        }
+        else if (item[0] == "dealDamage") {
+            socket.emit("dealDamage", Number(item[1]))
+            thingsToEmit.splice(i, 1)
+        }
+    })
+
     drawPlayer()
     drawEnemy()
     drawSlashes()
     drawEnemyHealthBar()
     drawStageText()
     promptUpdateStats()
-    drawDamageMessage()
+    drawDamageMessages()
     drawXPMessages()
     drawPlayerXPBar()
 
@@ -518,7 +529,7 @@ function createDamageMessage(multiplier) {
     damageMessages.push({
         x: Math.floor(Math.random() * 120) + 620,
         y: 200,
-        text: formatNumber(player.attack * multiplier)
+        text: formatNumber(player.stats.attack * multiplier)
     })
 }
 
@@ -609,7 +620,9 @@ var mouseXAdditional = 0
 var mouseYAdditional = 0
 function init() {
     
-    handleSockets()
+    setInterval(() => {
+        handleSockets()
+    }, 1000)
 
     if (screen.height > 800) {
         canvas.classList.add("taller-screen")
@@ -627,7 +640,8 @@ function init() {
 }
 
 function handleSockets() {
-    socket.on('connect', () => {
+    socket.on('connection', () => {
+        console.log("client connect")
         thingsToEmit.forEach((item, i) => {
             var item = item.split(" ")
             if (item[0] == "playerLevelUp") {
@@ -654,7 +668,3 @@ function handleSockets() {
 }
 
 init()
-
-setInterval(() => {
-    handleSockets
-}, 1000)

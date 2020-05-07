@@ -1,8 +1,6 @@
 var fs = require("fs")
 var path = require('path')
 
-var quotes = readQuotesJSON()
-
 function formatNumber(val) {
     var result = val
     if (val >= 1000000000) {
@@ -18,16 +16,21 @@ function formatNumber(val) {
 }
 
 function readQuotesJSON() {
-    var result
-    fs.readFile(path.join(__dirname, "../client/static/quotes.json") , (err, data) => {
+    fs.readFile("server/static/quotes.json" , (err, data) => {
         if (err) { console.error(err) }
-            var asJSON = JSON.parse(data).quotes
-            return asJSON
-            result = JSON//.stringify(asJSON)
+            quotes = JSON.parse(data).quotes
+            return quotes
         })
-    return result
+}
+
+function init() {
+    readQuotesJSON()
+}
+
+function getQuotes() {
+    return quotes
 }
 
 module.exports = {
-    formatNumber, readQuotesJSON, quotes
+    formatNumber, readQuotesJSON, quotes: readQuotesJSON(), init, getQuotes
 }

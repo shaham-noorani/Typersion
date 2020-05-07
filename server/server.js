@@ -28,51 +28,49 @@ app.get('/', function(request, response) {
   response.sendFile(path.join(__dirname, '../client/static/index.html'));
 });
 
-/*
-app.use('/static', express.static(__dirname + '/static'));
-// Routing
-app.get('/', function(request, response) {
-  response.sendFile(path.join(__dirname, 'index.html'));
-});
-*/
-
-//Init game
 initGame()
 
-// All of the emits for the client
-
-emitDataForClient()
 listenForEmitsFromClient()
+
+setInterval(() => {
+  emitDataForClient()
+
+  Player.updatePlayerJSON()
+  Enemy.updateEnemyJSON()
+}, 1000)
+
+setInterval(() => {
+  Player.updatePlayerJSON()
+  Enemy.updateEnemyJSON()
+}, 1000)
 
 // Starts the server.
 server.listen(PORT, function() {
-    console.log('Starting server on port ' + PORT);
-    console.log('Go to: http://localhost:' + PORT + '/ to play!')
-
-  });
+  console.log('Starting server on port ' + PORT);
+  console.log('Go to: http://localhost:' + PORT + '/ to play!')
+});
 
 function initGame() {
   Player.init()
   Enemy.init()
   Items.init()
+  helper.init()
 }
 
 function emitDataForClient() {
-  console.log(helper.readQuotesJSON())
-  io.emit("quotes", helper.readQuotesJSON())
+  io.emit("quotes", helper.getQuotes())
   io.emit("player", Player.getPlayer())
-  Player.init()
-  console.log(Player.getPlayerFromJSON())
-  console.log(Player.getPlayer())
   io.emit("enemy", Enemy.getEnemy())
 }
 
 function listenForEmitsFromClient() {
   io.on('connection', (socket) => {
+    console.log("connected")
     socket.on('levelUpPlayer', (stat) => {
       Player.levelUpStat(stat)
     })
     socket.on('dealDamage', (mult) => {
+      console.log("damage: " + mult)
       Player.dealDamage(mult)
     })
   })

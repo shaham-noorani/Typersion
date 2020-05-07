@@ -1,9 +1,7 @@
 var fs = require('fs')
-var Helper = require("./helper").default
-var Enemy = require("./enemy").default
+var Helper = require("./helper")
+var Enemy = require("./enemy")
 // var items = require("./items")
-
-var player
 
 function getPlayer() {
     return player
@@ -17,7 +15,7 @@ function getPlayerFromJSON() {
     fs.readFile("server/static/player.json" , (err, data) => {
         if (err) { console.error(err) }
         player = JSON.parse(data).player
-        // console.log(player)
+        return player
     })
 }
 
@@ -69,7 +67,7 @@ function getXPUntilNextLevel(level) {
 
 function dealDamage(multiplier) {
     var enemy = Enemy.getEnemy()
-    var damage = player.attack.stats * player.equipmentEffects.attackMultiplier * multiplier
+    var damage = getPlayer().stats.attack * getPlayer().equipmentEffects.attackMultiplier * multiplier
     enemy.health -= damage
     Enemy.setEnemy(enemy)
 }
@@ -80,11 +78,18 @@ function levelUpStat(stat) {
     if (stat == "attack") { player.stats.attack += 1}  
 }
 
+function completeChecks() {
+    checkForLevelUp()
+    checkForStageAdvance()
+}
+
 function init() {
     getPlayerFromJSON()
-    // applyPlayerEquipment()
+    applyPlayerEquipment()
 }
 
 module.exports = {
-    getPlayer, setPlayer, givePlayerXP, levelUpStat, dealDamage, updatePlayerJSON, init, getPlayerFromJSON
+    getPlayer, setPlayer, givePlayerXP, levelUpStat, 
+    dealDamage, updatePlayerJSON, init, getPlayerFromJSON, 
+    player: getPlayerFromJSON(), completeChecks
 }

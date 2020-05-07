@@ -2,7 +2,6 @@ var Player = require("./player").default
 var Items = require("./items").default
 var fs = require("fs") 
 
-var enemy
 
 function getEnemyFromJSON() {
     fs.readFile("server/static/enemy.json" , (err, data) => {
@@ -44,5 +43,5 @@ function init() {
 }
 
 module.exports = {
-    init, getEnemy, setEnemy
+    init, getEnemy, setEnemy, enemy: getEnemyFromJSON(), updateEnemyJSON
 }
