@@ -1,7 +1,7 @@
 var fs = require("fs")
 
 var itemTierNames
-var Player
+// var Player
 
 function updatesItemsFromJSON() {
     fs.readFile("server/static/items.json" , (err, data) => {
@@ -71,5 +71,5 @@ function setPlayer(p) {
 }
 
 module.exports = {
-    init, rollDropItem, Player: "", setPlayer
+    init, rollDropItem, Player: "", setPlayer, itemTierNames: ""
 }

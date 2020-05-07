@@ -1,7 +1,7 @@
 var Items = require("./items")
 var fs = require("fs") 
 
-var enemy
+// var enemy
 var Player
 
 function getEnemyFromJSON() {

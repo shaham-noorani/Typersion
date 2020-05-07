@@ -68,18 +68,18 @@ function listenForEmitsFromClient() {
 }
 
 function secondlyProcesses() {
-  emitDataForClient()
-
   // Save current state to json
   Player.updatePlayerJSON()
   Enemy.updateEnemyJSON()
-
+  
   // Passing around instances of objects
   Player.setEnemy(Enemy)
   Enemy.setPlayer(Player)
   Items.setPlayer(Player)
-
+  
   // See if player or enemy need to be updates
   Player.completeChecks()
   Enemy.completeChecks()
+  
+  emitDataForClient()
 }

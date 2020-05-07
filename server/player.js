@@ -2,7 +2,7 @@ var fs = require('fs')
 var Helper = require("./helper")
 // var items = require("./items")
 
-var player
+// var player
 var Enemy
 
 function getPlayer() {
@@ -14,6 +14,7 @@ function setPlayer(p) {
 }
 
 function getPlayerFromJSON() {
+    console.log("getPlayerFromJSON called")
     fs.readFile("server/static/player.json" , (err, data) => {
         if (err) { console.error(err) }
         player = JSON.parse(data).player
