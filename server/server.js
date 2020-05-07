@@ -34,7 +34,7 @@ listenForEmitsFromClient()
 
 setInterval(() => {
   secondlyProcesses()
-}, 1000)
+}, 100)
 
 // Starts the server.
 server.listen(PORT, function() {
@@ -58,10 +58,10 @@ function emitDataForClient() {
 function listenForEmitsFromClient() {
   io.on('connection', (socket) => {
     socket.on('levelUpPlayer', (stat) => {
+      console.log("level up: " + stat)
       Player.levelUpStat(stat)
     })
     socket.on('dealDamage', (mult) => {
-      console.log("damage: " + mult)
       Player.dealDamage(mult)
     })
   })
@@ -70,11 +70,16 @@ function listenForEmitsFromClient() {
 function secondlyProcesses() {
   emitDataForClient()
 
+  // Save current state to json
+  Player.updatePlayerJSON()
+  Enemy.updateEnemyJSON()
+
+  // Passing around instances of objects
+  Player.setEnemy(Enemy)
+  Enemy.setPlayer(Player)
+  Items.setPlayer(Player)
+
   // See if player or enemy need to be updates
   Player.completeChecks()
   Enemy.completeChecks()
-
-  // Save current state to json
-  // Player.updatePlayerJSON()
-  // Enemy.updateEnemyJSON()
 }

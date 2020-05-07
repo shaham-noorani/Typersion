@@ -1,7 +1,9 @@
 var fs = require('fs')
 var Helper = require("./helper")
-var Enemy = require("./enemy")
 // var items = require("./items")
+
+var player
+var Enemy
 
 function getPlayer() {
     return player
@@ -20,12 +22,14 @@ function getPlayerFromJSON() {
 }
 
 function updatePlayerJSON() {
+    if (!player) { return }
     fs.writeFile('server/static/player.json', JSON.stringify(player), (err) => {
         if (err) throw err;
     });
 }
 
 function checkForLevelUp() {
+    if (!player) { return }
     if (player.xp >= player.xpUntilNextLevel) {
         player.xp -= player.xpUntilNextLevel
         player.level += 1
@@ -35,6 +39,7 @@ function checkForLevelUp() {
 }
 
 function checkForStageAdvance() {
+    if (!player) { return }
     if (player.enemiesLeftOnStage <= 0) {
         player.stage += 1
         player.enemiesLeftOnStage = 5
@@ -54,11 +59,6 @@ function applyPlayerEquipment() {
 function givePlayerXP() {
     player.xp += Math.floor(getXPUntilNextLevel(player.stage) / 5)
     player.enemiesLeftOnStage -= 1
-    server.addXPMessage({
-        x: Math.floor(Math.random() * 120) + 620,
-        y: 200,
-        text: helper.formatNumber(Math.floor(getXPUntilNextLevel(player.stage) / 5))
-    })
 }
 
 function getXPUntilNextLevel(level) {
@@ -83,6 +83,10 @@ function completeChecks() {
     checkForStageAdvance()
 }
 
+function setEnemy(e) {
+    Enemy = e
+}
+
 function init() {
     getPlayerFromJSON()
     // applyPlayerEquipment()
@@ -91,5 +95,5 @@ function init() {
 module.exports = {
     getPlayer, setPlayer, givePlayerXP, levelUpStat, 
     dealDamage, updatePlayerJSON, init, getPlayerFromJSON, 
-    player: getPlayerFromJSON(), completeChecks
+    player: getPlayerFromJSON(), Enemy: "", completeChecks, setEnemy
 }

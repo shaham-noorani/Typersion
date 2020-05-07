@@ -2,4 +2,4 @@
 .gitignore
 node_modules/
 
-server/static/*.json
+server/static/

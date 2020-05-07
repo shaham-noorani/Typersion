@@ -1,7 +1,8 @@
-var Player = require("./player.js")
 var Items = require("./items")
 var fs = require("fs") 
 
+var enemy
+var Player
 
 function getEnemyFromJSON() {
     fs.readFile("server/static/enemy.json" , (err, data) => {
@@ -11,12 +12,14 @@ function getEnemyFromJSON() {
 }
 
 function updateEnemyJSON() {
+    if (!enemy) { return }
     fs.writeFile('server/static/enemy.json', JSON.stringify(enemy), (err) => {
         if (err) throw err;
     });
 }
 
 function checkIfEnemyIsDead() {
+    if (!enemy) { return }
     if (enemy.health <= 0) {
         enemy.health = calcEnemyHealth()
         enemy.maxHealth = enemy.health
@@ -34,7 +37,8 @@ function setEnemy(e) {
 }
 
 function calcEnemyHealth() {
-    var stage = Player.getPlayer().stage
+    var player = Player.getPlayer()
+    var stage = player.stage
     return Math.floor((stage * stage) / 2) + 5
 }
 
@@ -42,10 +46,14 @@ function completeChecks() {
     checkIfEnemyIsDead()
 }
 
+function setPlayer(p) {
+    Player = p
+}
+
 function init() {
     getEnemyFromJSON()
 }
 
 module.exports = {
-    init, getEnemy, setEnemy, enemy: getEnemyFromJSON(), updateEnemyJSON, completeChecks
+    init, getEnemy, setEnemy, enemy: getEnemyFromJSON(), Player: "", updateEnemyJSON, completeChecks, setPlayer
 }

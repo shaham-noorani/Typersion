@@ -466,8 +466,8 @@ function promptUpdateStats() {
         context.fillStyle = "rgb(0, 0, 0)"
         context.font = "normal 20px Lato"
         context.fillText("AP: " + player.ap, 100, 115)
-        context.fillText("ATK: " + player.attack, 100, 145)
-        context.fillText("LUK: " + player.luck, 100, 175)
+        context.fillText("ATK: " + player.stats.attack, 100, 145)
+        context.fillText("LUK: " + player.stats.luck, 100, 175)
         context.fillText("+", 210, 142)
         context.fillText("+", 210, 177)
         context.closePath()

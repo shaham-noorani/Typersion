@@ -1,6 +1,1 @@
-{
-    "enemy": {
-        "health": 5,
-        "maxHealth": 5
-    }
-}
+{"health":5,"maxHealth":5}

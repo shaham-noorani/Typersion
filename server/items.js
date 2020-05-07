@@ -1,7 +1,7 @@
-var Player = require("./player.js")
 var fs = require("fs")
 
 var itemTierNames
+var Player
 
 function updatesItemsFromJSON() {
     fs.readFile("server/static/items.json" , (err, data) => {
@@ -11,7 +11,7 @@ function updatesItemsFromJSON() {
 }
 
 function rollDropItem() {
-    var player = player.getPlayer()
+    var player = Player.getPlayer()
     var stage = player.stage, luck = player.luck
 
     var rng = Math.floor(Math.random() * 10) + 1
@@ -27,7 +27,7 @@ function rollDropItem() {
 }
 
 function givePlayerNormalItem() {
-    var player = getPlayer()
+    var player = Player.getPlayer()
     var rng = Math.floor(Math.random() * 3) + 1
     var tier = Math.floor(player.stage-1 / 5) + 1
 
@@ -66,6 +66,10 @@ function init() {
     updatesItemsFromJSON()
 }
 
+function setPlayer(p) {
+    Player = p
+}
+
 module.exports = {
-    init, rollDropItem
+    init, rollDropItem, Player: "", setPlayer
 }
