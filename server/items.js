@@ -1,10 +1,12 @@
 var fs = require("fs")
+var path = require('path')
+
+var Player
 
 var itemTierNames
-// var Player
 
 function updatesItemsFromJSON() {
-    fs.readFile("server/static/items.json" , (err, data) => {
+    fs.readFile(path.join(__dirname, "static/items.json") , (err, data) => {
         if (err) { console.error(err) }
         itemTierNames = JSON.parse(data).itemTierNames
     })

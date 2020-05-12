@@ -1,11 +1,11 @@
 var Items = require("./items")
 var fs = require("fs") 
+var path = require('path')
 
-// var enemy
 var Player
 
 function getEnemyFromJSON() {
-    fs.readFile("server/static/enemy.json" , (err, data) => {
+    fs.readFile(path.join(__dirname, "static/enemy.json") , (err, data) => {
         if (err) { console.error(err) }
         enemy = JSON.parse(data).enemy
       })
@@ -16,7 +16,7 @@ function updateEnemyJSON() {
     var json = {
         enemy: enemy
     }
-    fs.writeFile('server/static/enemy.json', JSON.stringify(json), (err) => {
+    fs.writeFile(path.join(__dirname, "static/enemy.json"), JSON.stringify(json), (err) => {
         if (err) throw err;
     });
 }

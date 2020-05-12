@@ -1,5 +1,6 @@
 var fs = require('fs')
 var Helper = require("./helper")
+var path = require('path')
 // var items = require("./items")
 
 // var player
@@ -15,7 +16,7 @@ function setPlayer(p) {
 
 function getPlayerFromJSON() {
     console.log("getPlayerFromJSON called")
-    fs.readFile("server/static/player.json" , (err, data) => {
+    fs.readFile(path.join(__dirname, "static/player.json") , (err, data) => {
         if (err) { console.error(err) }
         player = JSON.parse(data).player
         return player
