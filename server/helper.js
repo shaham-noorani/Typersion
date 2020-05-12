@@ -16,7 +16,7 @@ function formatNumber(val) {
 }
 
 function readQuotesJSON() {
-    fs.readFile("server/static/quotes.json" , (err, data) => {
+    fs.readFile(path.join(__dirname, "static/quotes.json") , (err, data) => {
         if (err) { console.error(err) }
             quotes = JSON.parse(data).quotes
             return quotes
