@@ -18,6 +18,7 @@ function updateEnemyJSON() {
     }
     fs.writeFile(path.join(__dirname, "static/enemy.json"), JSON.stringify(json), (err) => {
         if (err) throw err;
+        console.error(err)
     });
 }
 

@@ -15,7 +15,6 @@ function setPlayer(p) {
 }
 
 function getPlayerFromJSON() {
-    console.log("getPlayerFromJSON called")
     fs.readFile(path.join(__dirname, "static/player.json") , (err, data) => {
         if (err) { console.error(err) }
         player = JSON.parse(data).player
@@ -30,6 +29,7 @@ function updatePlayerJSON() {
     }
     fs.writeFile('server/static/player.json', JSON.stringify(json), (err) => {
         if (err) throw err;
+        console.error(err)
     });
 }
 
