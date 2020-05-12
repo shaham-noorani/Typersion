@@ -7,7 +7,7 @@ var fs = require('fs')
 
 // Adjacent Files
 var helper = require("./helper")
-var Player = require("./player.js")
+var Player = require("./player")
 var Enemy = require("./enemy")
 var Items = require("./items")
 
