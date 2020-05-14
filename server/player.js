@@ -34,7 +34,6 @@ function updatePlayerJSON() {
 }
 
 function checkForLevelUp() {
-    if (!player) { return }
     if (player.xp >= player.xpUntilNextLevel) {
         player.xp -= player.xpUntilNextLevel
         player.level += 1
@@ -44,7 +43,6 @@ function checkForLevelUp() {
 }
 
 function checkForStageAdvance() {
-    if (!player) { return }
     if (player.enemiesLeftOnStage <= 0) {
         player.stage += 1
         player.enemiesLeftOnStage = 5
@@ -84,6 +82,7 @@ function levelUpStat(stat) {
 }
 
 function completeChecks() {
+    if (!player) { return }
     checkForLevelUp()
     checkForStageAdvance()
 }
