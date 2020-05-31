@@ -3,5 +3,5 @@
 node_modules/
 
 
-# server/static/enemy.json
-# server/static/player.json
+server/static/enemy.json
+server/static/player.json
