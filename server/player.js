@@ -28,7 +28,6 @@ function updatePlayerJSON() {
         player: player
     }
     fs.writeFile('server/static/player.json', JSON.stringify(json), (err) => {
-        console.error(err)
         if (err) throw err;
     });
 }

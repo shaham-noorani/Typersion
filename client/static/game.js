@@ -619,7 +619,7 @@ function freePlay() {
 var mouseXAdditional = 0
 var mouseYAdditional = 0
 function init() {
-    
+
     recieveDataFromServer()
 
     setInterval(() => {
