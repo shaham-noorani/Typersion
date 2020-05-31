@@ -13,8 +13,6 @@ var Items = require("./items")
 
 // Server
 var app = express();
-var server = http.Server(app);
-var io = socketIO(server);
 
 // Dynamic port setting for GCloud
 const PORT = process.env.PORT || 8000;
@@ -27,6 +25,9 @@ app.use("/static", express.static(path.join(__dirname, '../client/static')))
 app.get('/', function(request, response) {
   response.sendFile(path.join(__dirname, '../client/static/index.html'));
 });
+
+var server = http.Server(app);
+var io = socketIO(server);
 
 initGame()
 
