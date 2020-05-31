@@ -1,7 +1,6 @@
 .DS_Store
-
 node_modules/
 
+*.json
 
-server/static/enemy.json
-server/static/player.json
+server/static/
