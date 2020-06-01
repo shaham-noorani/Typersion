@@ -55,23 +55,31 @@ function emitDataForClient() {
   io.emit("player", Player.getPlayer())
   io.emit("enemy", Enemy.getEnemy())
 }
-var count = 0
+
 function listenForEmitsFromClient() {
   io.on('connection', (socket) => {
-    socket.on('dealDamage', (mult) => {
-      Player.dealDamage(mult)
+    socket.on('player', (player) => {
+      Player.setPlayer(player)
     })
-    socket.on('levelUpPlayer', (stat) => {
+    socket.on('enemy', (enemy) => {
+      Enemy.setEnemy(enemy)
+    })
+
+    socket.on('dealDamage', (mult, callback) => {
+      Player.dealDamage(mult)
+      callback(Enemy.getEnemy())
+    })
+    socket.on('levelUpPlayer', (stat, callback) => {
       Player.levelUpStat(stat)
+      callback(Player.getPlayer())
     })
   })
 }
 
 function secondlyProcesses() {
-  // Save current state to json
-  Player.updatePlayerJSON()
-  Enemy.updateEnemyJSON()
-  
+
+  // try { console.log(Player.getPlayer().ap) }
+  // catch(err) { console.error(err) }
   // Passing around instances of objects
   Player.setEnemy(Enemy)
   Enemy.setPlayer(Player)

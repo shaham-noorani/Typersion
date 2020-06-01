@@ -3,7 +3,7 @@ var Helper = require("./helper")
 var path = require('path')
 // var items = require("./items")
 
-// var player
+var player
 var Enemy
 
 function getPlayer() {
@@ -12,24 +12,6 @@ function getPlayer() {
 
 function setPlayer(p) {
     player = p
-}
-
-function getPlayerFromJSON() {
-    fs.readFile(path.join(__dirname, "static/player.json") , (err, data) => {
-        if (err) { console.error(err) }
-        player = JSON.parse(data).player
-        return player
-    })
-}
-
-function updatePlayerJSON() {
-    if (!player) { return }
-    var json = {
-        player: player
-    }
-    fs.writeFile('server/static/player.json', JSON.stringify(json), (err) => {
-        if (err) throw err;
-    });
 }
 
 function checkForLevelUp() {
@@ -91,12 +73,10 @@ function setEnemy(e) {
 }
 
 function init() {
-    getPlayerFromJSON()
     // applyPlayerEquipment()
 }
 
 module.exports = {
     getPlayer, setPlayer, givePlayerXP, levelUpStat, 
-    dealDamage, updatePlayerJSON, init, getPlayerFromJSON, 
-    player: getPlayerFromJSON(), Enemy: "", completeChecks, setEnemy
+    dealDamage, init, player: "", Enemy: "", completeChecks, setEnemy
 }

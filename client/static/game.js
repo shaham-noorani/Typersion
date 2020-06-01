@@ -5,8 +5,6 @@ var mouseX = 0
 var mouseY = 0
 var click = false
 
-var player, enemy
-
 var currentScreen
 var thingsToEmit = []
 
@@ -75,7 +73,7 @@ function getRandomQuote() {
 
     if (currentScreen == "goOut") {
         lastShot = 0
-        var stage = player.stage, luck = player.stats.luck
+        var stage = getPlayer().stage, luck = getPlayer().stats.luck
         var ran = Math.floor(stage - (Math.floor(Math.random() * 20) * -1 + 10) - luck)
 
         if (ran < 0) { ran = 0 }
@@ -374,7 +372,7 @@ function createXPMessage() {
     xpMessages.push({
         x: Math.floor(Math.random() * 120) + 620,
         y: 200,
-        text: player.xpUntilNextLevel
+        text: getPlayer().xpUntilNextLevel
     })
 }
 
@@ -385,7 +383,7 @@ function drawEnemy() {
 }
 
 function drawEnemyHealthBar() {
-    var health = enemy.health, maxHealth = enemy.maxHealth
+    var health = getEnemy().health, maxHealth = getEnemy().maxHealth
 
     context.beginPath()
     context.fillStyle = "rgb(100, 130, 180, 0.8)"
@@ -409,7 +407,7 @@ function drawEnemyHealthBar() {
 }
 
 function drawPlayerXPBar() {
-    var xp = player.xp, xpUntilNextLevel = player.xpUntilNextLevel, level = player.level
+    var xp = getPlayer().xp, xpUntilNextLevel = getPlayer().xpUntilNextLevel, level = getPlayer().level
 
     context.beginPath()
     context.fillStyle = "rgb(80, 110, 160, 0.8)"
@@ -435,8 +433,8 @@ function drawPlayerXPBar() {
 }
 
 function drawStageText() {
-    var stage = player.stage
-    var enemiesLeftString = player.enemiesLeftOnStage + "/5"
+    var stage = getPlayer().stage
+    var enemiesLeftString = getPlayer().enemiesLeftOnStage + "/5"
 
     context.beginPath()
     context.fillStyle = "rgb(0, 0, 0)"
@@ -448,7 +446,7 @@ function drawStageText() {
 }
 
 function promptUpdateStats() {
-    if (player.ap > 0) {
+    if (getPlayer().ap > 0) {
         context.beginPath()
         context.fillStyle = "rgb(255, 215, 0, 0.6)"
         context.rect(90, 90, 150, 100)
@@ -465,9 +463,9 @@ function promptUpdateStats() {
         context.beginPath()
         context.fillStyle = "rgb(0, 0, 0)"
         context.font = "normal 20px Lato"
-        context.fillText("AP: " + player.ap, 100, 115)
-        context.fillText("ATK: " + player.stats.attack, 100, 145)
-        context.fillText("LUK: " + player.stats.luck, 100, 175)
+        context.fillText("AP: " + getPlayer().ap, 100, 115)
+        context.fillText("ATK: " + getPlayer().stats.attack, 100, 145)
+        context.fillText("LUK: " + getPlayer().stats.luck, 100, 175)
         context.fillText("+", 210, 142)
         context.fillText("+", 210, 177)
         context.closePath()
@@ -529,7 +527,7 @@ function createDamageMessage(multiplier) {
     damageMessages.push({
         x: Math.floor(Math.random() * 120) + 620,
         y: 200,
-        text: formatNumber(player.stats.attack * multiplier)
+        text: formatNumber(getPlayer().stats.attack * multiplier)
     })
 }
 
@@ -643,15 +641,87 @@ function init() {
     title()
 }
 
+function getPlayer() {
+    var result = localStorage.getItem("player")
+    if (!result || result == "null" || result == null) {
+        return {
+            level: 1,
+            xp: 0,
+            xpUntilNextLevel: 3,
+            ap: 0,
+            stats: {
+                attack:1, luck:1
+            },
+            equipmentEffects: {
+                attackMultiplier: 1, luckMultiplier: 1
+            }, 
+            stage: 1,
+            enemiesLeftOnStage: 5,
+            inventory: [],
+            equipment: []
+        }
+    }
+    try {
+        result = JSON.parse(result)
+    } catch (error) {
+        console.error(error)
+
+        result = {
+            level: 1,
+            xp: 0,
+            xpUntilNextLevel: 3,
+            ap: 0,
+            stats: {
+                attack:1, luck:1
+            },
+            equipmentEffects: {
+                attackMultiplier: 1, luckMultiplier: 1
+            }, 
+            stage: 1,
+            enemiesLeftOnStage: 5,
+            inventory: [],
+            equipment: []
+        }
+    } 
+    return result
+}
+
+function setPlayer(player) {
+    localStorage.setItem("player", JSON.stringify(player))
+}
+
+function getEnemy() {
+    var result = localStorage.getItem("enemy")
+    if (!result || result == "null" || result == null) { return {
+        health: 5,
+        maxHealth: 5
+    } }
+    try {
+        result = JSON.parse(result)
+    } catch (error) {
+        console.error(error)
+        
+        result = {
+            health: 5,
+            maxHealth: 5
+        }
+    }
+    return result
+}
+
+function setEnemy(enemy) {
+    localStorage.setItem("enemy", JSON.stringify(enemy))
+}
+
 function recieveDataFromServer() {
     socket.on('quotes', (data) => {
         quotes = data
     });
     socket.on('player', (data) => {
-        player = data
+        setPlayer(data)
     });
     socket.on('enemy', (data) => {
-        enemy = data
+        setEnemy(data)
     });
 }
 
@@ -659,16 +729,21 @@ function sendDataToServer() {
     thingsToEmit.forEach((item, i) => {
         var items = item.split(" ")
         if (items[0] == "levelUpPlayer") {
-            socket.emit("levelUpPlayer", items[1])                
-            thingsToEmit.splice(i, 1)
+            socket.emit("levelUpPlayer", items[1], (updatedPlayer) => {
+                thingsToEmit.splice(i, 1)
+                setPlayer(updatedPlayer)
+            })                
         }
         else if (items[0] == "dealDamage") {
-            socket.emit("dealDamage", Number(items[1]), () => {
+            socket.emit("dealDamage", Number(items[1]), (updatedEnemy) => {
                 thingsToEmit.splice(i, 1)
+                setEnemy(updatedEnemy)
             })
         }
     })
     
+    socket.emit("player", getPlayer())
+    socket.emit("enemy", getEnemy())
 }
 
 init()

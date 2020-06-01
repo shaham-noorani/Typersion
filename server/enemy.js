@@ -2,24 +2,8 @@ var Items = require("./items")
 var fs = require("fs") 
 var path = require('path')
 
+var enemy
 var Player
-
-function getEnemyFromJSON() {
-    fs.readFile(path.join(__dirname, "static/enemy.json") , (err, data) => {
-        if (err) { console.error(err) }
-        enemy = JSON.parse(data).enemy
-      })
-}
-
-function updateEnemyJSON() {
-    if (!enemy) { return }
-    var json = {
-        enemy: enemy
-    }
-    fs.writeFile(path.join(__dirname, "static/enemy.json"), JSON.stringify(json), (err) => {
-        if (err) throw err;
-    });
-}
 
 function checkIfEnemyIsDead() {
     if (!enemy) { return }
@@ -54,9 +38,8 @@ function setPlayer(p) {
 }
 
 function init() {
-    getEnemyFromJSON()
 }
 
 module.exports = {
-    init, getEnemy, setEnemy, enemy: getEnemyFromJSON(), Player: "", updateEnemyJSON, completeChecks, setPlayer
+    init, getEnemy, setEnemy, enemy: "", Player: "", completeChecks, setPlayer
 }
