@@ -65,11 +65,12 @@ function listenForEmitsFromClient() {
       Enemy.setEnemy(enemy)
     })
 
-    socket.on('dealDamage', (mult, callback) => {
+    socket.on('dealDamage', function (mult, callback) {
       Player.dealDamage(mult)
-      callback(Enemy.getEnemy())
+      try { callback(Enemy.getEnemy()) }
+      catch (err) { console.error(err) }
     })
-    socket.on('levelUpPlayer', (stat, callback) => {
+    socket.on('levelUpPlayer', function (stat, callback) {
       Player.levelUpStat(stat)
       callback(Player.getPlayer())
     })
@@ -77,15 +78,12 @@ function listenForEmitsFromClient() {
 }
 
 function secondlyProcesses() {
-
-  // try { console.log(Player.getPlayer().ap) }
-  // catch(err) { console.error(err) }
   // Passing around instances of objects
   Player.setEnemy(Enemy)
   Enemy.setPlayer(Player)
   Items.setPlayer(Player)
   
-  // See if player or enemy need to be updates
+  // See if player or enemy need to be updated
   Player.completeChecks()
   Enemy.completeChecks()
   

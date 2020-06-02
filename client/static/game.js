@@ -729,14 +729,14 @@ function sendDataToServer() {
     thingsToEmit.forEach((item, i) => {
         var items = item.split(" ")
         if (items[0] == "levelUpPlayer") {
-            socket.emit("levelUpPlayer", items[1], (updatedPlayer) => {
-                thingsToEmit.splice(i, 1)
+            thingsToEmit.splice(i, 1)
+            socket.emit("levelUpPlayer", Number(items[1]), function(updatedPlayer) {
                 setPlayer(updatedPlayer)
-            })                
+            })
         }
         else if (items[0] == "dealDamage") {
-            socket.emit("dealDamage", Number(items[1]), (updatedEnemy) => {
-                thingsToEmit.splice(i, 1)
+            thingsToEmit.splice(i, 1)
+            socket.emit("dealDamage", Number(items[1]), function(updatedEnemy) {
                 setEnemy(updatedEnemy)
             })
         }
