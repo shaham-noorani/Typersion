@@ -641,9 +641,8 @@ function init() {
 
     setInterval(() => {
         sendDataToServer()
-    }, 1000 / 60)
+    }, 1000 / 6)
 
-    // sendDataToServer()
 
     if (screen.height > 800) {
         canvas.classList.add("taller-screen")
