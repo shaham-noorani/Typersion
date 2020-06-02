@@ -641,7 +641,7 @@ function init() {
 
     setInterval(() => {
         sendDataToServer()
-    }, 1000 / 6)
+    }, 1000 / 600)
 
 
     if (screen.height > 800) {
