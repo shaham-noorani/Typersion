@@ -67,12 +67,18 @@ function listenForEmitsFromClient() {
 
     socket.on('dealDamage', function (mult, callback) {
       Player.dealDamage(mult)
-      try { callback(Enemy.getEnemy()) }
+      Enemy.completeChecks()
+      Player.completeChecks()
+
+      try { callback({ enemy: Enemy.getEnemy(), player: Player.getPlayer() }) }
       catch (err) { console.error(err) }
     })
     socket.on('levelUpPlayer', function (stat, callback) {
       Player.levelUpStat(stat)
-      callback(Player.getPlayer())
+      Player.completeChecks()
+
+      try { callback({ player: Player.getPlayer() }) }
+      catch (err) { console.error(err) }
     })
   })
 }

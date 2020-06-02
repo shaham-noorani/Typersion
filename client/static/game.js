@@ -672,7 +672,7 @@ function getPlayer() {
             xpUntilNextLevel: 3,
             ap: 0,
             stats: {
-                attack:1, luck:1
+                attack: 1, luck: 0
             },
             equipmentEffects: {
                 attackMultiplier: 1, luckMultiplier: 1
@@ -717,12 +717,12 @@ function recieveDataFromServer() {
     socket.on('quotes', (data) => {
         quotes = data
     });
-    socket.on('player', (data) => {
-        setPlayer(data)
-    });
-    socket.on('enemy', (data) => {
-        setEnemy(data)
-    });
+    // socket.on('player', (data) => {
+    //     setPlayer(data)
+    // });
+    // socket.on('enemy', (data) => {
+    //     setEnemy(data)
+    // });
 }
 
 function sendDataToServer() {
@@ -730,14 +730,15 @@ function sendDataToServer() {
         var items = item.split(" ")
         if (items[0] == "levelUpPlayer") {
             thingsToEmit.splice(i, 1)
-            socket.emit("levelUpPlayer", Number(items[1]), function(updatedPlayer) {
-                setPlayer(updatedPlayer)
+            socket.emit("levelUpPlayer", items[1], function(data) {
+                setPlayer(data.player)
             })
         }
         else if (items[0] == "dealDamage") {
             thingsToEmit.splice(i, 1)
-            socket.emit("dealDamage", Number(items[1]), function(updatedEnemy) {
-                setEnemy(updatedEnemy)
+            socket.emit("dealDamage", Number(items[1]), function(data) {
+                setEnemy(data.enemy)
+                setPlayer(data.player)
             })
         }
     })
