@@ -41,7 +41,7 @@ function applyPlayerEquipment() {
 }
 
 function givePlayerXP() {
-    player.xp += Math.floor(getXPUntilNextLevel(player.stage) / 5)
+    player.xp += Math.floor(getXPUntilNextLevel(player.stage) / 5) + 1
     player.enemiesLeftOnStage -= 1
 }
 

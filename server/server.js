@@ -52,8 +52,6 @@ function initGame() {
 
 function emitDataForClient() {
   io.emit("quotes", helper.getQuotes())
-  io.emit("player", Player.getPlayer())
-  io.emit("enemy", Enemy.getEnemy())
 }
 
 function listenForEmitsFromClient() {

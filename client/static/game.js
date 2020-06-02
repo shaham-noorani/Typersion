@@ -391,8 +391,14 @@ function createXPMessage() {
 
 enemyImg = new Image(200, 80)
 enemyImg.src = "static/cyclops.png"
+bossImg = new Image(200, 80)
+bossImg.src = "static/boss.png"
 function drawEnemy() {
-    context.drawImage(enemyImg, 650, 220)
+    if (getEnemy().boss) {
+        context.drawImage(bossImg, 650, 220)
+    } else { 
+        context.drawImage(enemyImg, 650, 220)
+    }
 }
 
 function drawEnemyHealthBar() {
@@ -716,7 +722,8 @@ function getEnemy() {
         
         result = {
             health: 5,
-            maxHealth: 5
+            maxHealth: 5,
+            boss: false
         }
     }
     return result
