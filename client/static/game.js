@@ -67,6 +67,7 @@ function setMouseXY(event) {
 }
 
 var quotes = ""
+var lastRan
 function getRandomQuote() {
     quoteInputElement.value = ""
     var ran = Math.floor(Math.random() * quotes.length) + 1
@@ -74,10 +75,22 @@ function getRandomQuote() {
     if (currentScreen == "goOut") {
         lastShot = 0
         var stage = getPlayer().stage, luck = getPlayer().stats.luck
-        var ran = Math.floor(stage - (Math.floor(Math.random() * 20) * -1 + 10) - luck)
+        var count = 0
+        while (true) {
+            ran = Math.floor(stage - (Math.floor(Math.random() * 20) * -1 + 10) - luck)
 
-        if (ran < 0) { ran = 0 }
-        if (ran >= quotes.length) { ran = quotes.length - 1 }
+            if (ran < 0) { ran = 0 }
+            if (ran >= quotes.length) { ran = quotes.length - 1 }
+
+            if (ran !== lastRan) {
+                lastRan = ran
+                break
+            }
+            count++
+            if (count == 5) {
+                break
+            }
+        }
     }
     var quote = quotes[ran].quote
 
@@ -714,15 +727,10 @@ function setEnemy(enemy) {
 }
 
 function recieveDataFromServer() {
+    if (quotes) { return }
     socket.on('quotes', (data) => {
         quotes = data
     });
-    // socket.on('player', (data) => {
-    //     setPlayer(data)
-    // });
-    // socket.on('enemy', (data) => {
-    //     setEnemy(data)
-    // });
 }
 
 function sendDataToServer() {
