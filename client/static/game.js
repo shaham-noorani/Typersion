@@ -62,8 +62,12 @@ quoteInputElement.addEventListener('input', () => {
 })
 
 function setMouseXY(event) {
-    mouseX = event.clientX - 320 + mouseXAdditional
-    mouseY = event.clientY - 127 + mouseYAdditional
+    var rect = canvas.getBoundingClientRect(),
+    scaleX = canvas.width / rect.width,    
+    scaleY = canvas.height / rect.height
+
+    mouseX = (event.clientX - rect.x) * scaleX
+    mouseY = (event.clientY - rect.y) * scaleY
 }
 
 var quotes = ""
@@ -143,12 +147,12 @@ function backToTitle() {
     // resets styling to title config.
     canvas.style.display = "flex"
     WPMElement.style.display = "none"
-    document.getElementById("quoteContainer").style.bottom = "1rem"
     document.getElementById("resetWPMButton").style.display = "none"
     document.getElementById("backButton").style.display = "none"
     quoteDisplayElement.innerHTML = ''
     quoteInputElement.value = ""
     quoteInputElement.readOnly = true
+    document.getElementById("quoteContainer").classList = "quote-container"
 
     currentScreen = "title"
     title()
@@ -156,38 +160,42 @@ function backToTitle() {
 
 var adventureButtonColor = "rgb(200, 200, 200)"
 var freePlayButtonColor = "rgb(200, 200, 200)"
+
+var w, h
 function title() {
     if (currentScreen == "title") {
         requestAnimationFrame(title)
     }
+    w = canvas.width, h = canvas.height
+
     context.clearRect(0, 0, canvas.width, canvas.height)
 
     // create adventure and freeplay button boxes
     context.beginPath()
     context.fillStyle = adventureButtonColor
-    context.rect(180, 220, 150, 40)
+    context.rect(w * 0.28, h * 0.5, w * 0.2, h * 0.1)
     context.fill()
     context.closePath()
 
     context.beginPath()
     context.fillStyle = freePlayButtonColor
-    context.rect(480, 220, 150, 40)
+    context.rect(w * 0.58, h * 0.5, w * 0.2, h * 0.1)
     context.fill()
     context.closePath()
 
     // write title text + text for both buttons
     context.beginPath()
     context.fillStyle = "rgb(40, 70, 120)"
-    context.font = "normal 40px Lato"
-    context.fillText("Typersion", 320, 80)
+    context.font = "normal 6vh Lato" //40px
+    context.fillText("Typersion", w * 0.4, h * 0.3)
     context.fillStyle = "rgb(100, 130, 180)"
     context.font = "normal 20px Lato"
-    context.fillText("Adventure", 210, 250)
-    context.fillText("Freeplay", 520, 250)
+    context.fillText("Adventure", w * 0.32, h * 0.57)
+    context.fillText("Freeplay", w * 0.64, h * 0.57)
     context.closePath()
 
     // check if freeplay button is being hovered over
-    if (mouseX > 480 && mouseX < 480 + 150 && mouseY > 220 & mouseY < 220 + 40) {
+    if (mouseX > w * 0.58 && mouseX < w * 0.78 && mouseY > h * 0.5 & mouseY < h * 0.6) {
         freePlayButtonColor = "rgb(255, 255, 255)"
 
         if (click) {
@@ -195,11 +203,12 @@ function title() {
             currentScreen = "freePlay"
             quoteInputElement.readOnly = false
             quoteInputElement.focus()
+            document.getElementById("quoteContainer").classList.add("freeplay")
             freePlay()
         }
     }
     // check if adventure button is being hovered over
-    else if (mouseX > 180 && mouseX < 180 + 150 && mouseY > 220 & mouseY < 220 + 40) {
+    else if (mouseX > w * 0.28 && mouseX < w * 0.48 && mouseY > h * 0.5 & mouseY < h * 0.6) {
         adventureButtonColor = "rgb(255, 255, 255)"
         
         if (click) {
@@ -623,9 +632,7 @@ document.addEventListener('keydown', keyPressed)
 
 function freePlay() {
     canvas.style.display = "none"
-    WPMElement.style.top = "5rem"
     WPMElement.style.display = "flex"
-    document.getElementById("quoteContainer").style.bottom = "6rem"
     document.getElementById("resetWPMButton").style.display = "block"
     document.getElementById("backButton").style.display = "block"
 
@@ -633,8 +640,6 @@ function freePlay() {
     startAndRunTimer()
 }
 
-var mouseXAdditional = 0
-var mouseYAdditional = 0
 function init() {
 
     recieveDataFromServer()
@@ -643,14 +648,6 @@ function init() {
         sendDataToServer()
     }, 1000 / 600)
 
-
-    if (screen.height > 800) {
-        canvas.classList.add("taller-screen")
-        WPMElement.classList.add("taller-screen")
-    }
-    else {
-        mouseXAdditional = 37; mouseYAdditional = 64;
-    }
     document.getElementById("resetWPMButton").style.display = "none"
     document.getElementById("backButton").style.display = "none"
     currentScreen = "title"
