@@ -9,20 +9,21 @@ function checkIfEnemyIsDead() {
     if (!enemy) { return }
     if (enemy.health <= 0) {
         spawnEnemy()
-        checkForBoss()
         Player.givePlayerXP()
         Items.rollDropItem()
+        checkForBoss()
     }
 }
 
 function spawnEnemy() {
     enemy.health = calcEnemyHealth()
     enemy.maxHealth = enemy.health
-    enemy.boss = false
+    enemy.boss.isBoss = false
+    enemy.boss.timeLeft = 0
 }
 
 function checkForBoss() {
-    if (Player.getPlayer().stage % 5 == 0 && Player.getPlayer().enemiesLeftOnStage == 2) {
+    if (Player.getPlayer().stage % 5 == 0 && Player.getPlayer().enemiesLeftOnStage == 1) {
        spawnBoss()
     }
 }
@@ -30,7 +31,7 @@ function checkForBoss() {
 function spawnBoss() {
     enemy.health = calcEnemyHealth() * 2
     enemy.maxHealth = enemy.health
-    enemy.boss = true
+    enemy.boss.isBoss = true
 }
 
 function getEnemy() {
@@ -59,5 +60,5 @@ function init() {
 }
 
 module.exports = {
-    init, getEnemy, setEnemy, enemy: "", Player: "", completeChecks, setPlayer
+    init, getEnemy, setEnemy, enemy: "", Player: "", completeChecks, setPlayer, spawnEnemy, spawnBoss
 }

@@ -78,6 +78,22 @@ function listenForEmitsFromClient() {
       try { callback({ player: Player.getPlayer() }) }
       catch (err) { console.error(err) }
     })
+    socket.on('bossDefeatedPlayer', (callback) => {
+      Player.defeatedByBoss()
+      Player.completeChecks()
+      Enemy.completeChecks()
+
+      try { callback({ player: Player.getPlayer(), enemy: Enemy.getEnemy() }) }
+      catch (err) { console.error(err) }
+    })
+    socket.on('spawnBoss', (callback) => {
+      Player.retryBoss()
+      Player.completeChecks()
+      Enemy.completeChecks()
+
+      try { callback({ player: Player.getPlayer(), enemy: Enemy.getEnemy() }) }
+      catch (err) { console.error(err) }
+    })
   })
 }
 

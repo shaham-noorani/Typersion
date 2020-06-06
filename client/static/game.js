@@ -78,7 +78,7 @@ function getRandomQuote() {
 
     if (currentScreen == "goOut") {
         lastShot = 0
-        var stage = getPlayer().stage, luck = getPlayer().stats.luck
+        var stage = getPlayer().stage, luck = getPlayer().stats.luck * getPlayer().equipmentEffects.luckMultiplier
         var count = 0
         while (true) {
             ran = Math.floor(stage - (Math.floor(Math.random() * 20) * -1 + 10) - luck)
@@ -187,7 +187,7 @@ function title() {
     context.beginPath()
     context.fillStyle = "rgb(40, 70, 120)"
     context.font = "normal 6vh Lato" //40px
-    context.fillText("Typersion", w * 0.4, h * 0.3)
+    context.fillText("Typersion", w * 0.43, h * 0.3)
     context.fillStyle = "rgb(100, 130, 180)"
     context.font = "normal 20px Lato"
     context.fillText("Adventure", w * 0.32, h * 0.57)
@@ -341,14 +341,19 @@ function goOut() {
         }
     })
 
+    checkForNewItems()
+
     drawPlayer()
     drawEnemy()
     drawSlashes()
     drawEnemyHealthBar()
+    if (getEnemy().boss.isBoss) { drawBossTimer() }
+    if (getPlayer().isStuckOnBoss) { drawFightBossButton() }
     drawStageText()
     promptUpdateStats()
     drawDamageMessages()
     drawXPMessages()
+    drawNewItemMessages()
     drawPlayerXPBar()
 
     if (!quoteDisplayElement.innerText) {
@@ -389,21 +394,12 @@ function drawPlayer() {
     context.drawImage(playerImg, 100, 220)
 }
 
-var xpMessages = []
-function createXPMessage() {
-    xpMessages.push({
-        x: Math.floor(Math.random() * 120) + 620,
-        y: 200,
-        text: getPlayer().xpUntilNextLevel
-    })
-}
-
 enemyImg = new Image(200, 80)
 enemyImg.src = "static/cyclops.png"
 bossImg = new Image(200, 80)
 bossImg.src = "static/boss.png"
 function drawEnemy() {
-    if (getEnemy().boss) {
+    if (getEnemy().boss.isBoss) {
         context.drawImage(bossImg, 650, 220)
     } else { 
         context.drawImage(enemyImg, 650, 220)
@@ -434,6 +430,72 @@ function drawEnemyHealthBar() {
     context.closePath()
 }
 
+var timeBossSpawnedAt
+function drawBossTimer() {
+    var enemy = getEnemy()
+
+    if (enemy.boss.timeLeft <= 0) {
+        enemy.boss.timeLeft = 10.0
+        console.log("spawnboss from client")
+        timeBossSpawnedAt = new Date()
+    }
+
+    var timeElapsed = (new Date - timeBossSpawnedAt) / 1000
+
+    enemy.boss.timeLeft = 10 - timeElapsed 
+    setEnemy(enemy)
+
+    if (timeElapsed >= 10) {
+        thingsToEmit.push("bossDefeatedPlayer")
+        return
+    }
+
+    context.beginPath()
+    context.fillStyle = "rgb(200, 0, 0)"
+    context.rect(225, 40, 400 * ((10 - timeElapsed) / 10), 20)
+    context.fill()
+    context.closePath()
+    
+    context.beginPath()
+    context.fillStyle = "rgb(200, 0, 0, 0.2)"
+    context.rect(225, 40, 400, 20)
+    context.fill()
+    context.closePath()
+
+    context.beginPath()
+    context.fillStyle = "rgb(0, 0, 0)"
+    context.font = "normal 25px Lato"
+    context.fillText("Time Left: " + (10 - timeElapsed).toFixed(1), 350, 30)
+    context.closePath()
+
+}
+
+var fightBossButtonColor = "rgb(0, 0, 0)"
+function drawFightBossButton() {
+    context.beginPath()
+    context.fillStyle = fightBossButtonColor
+    context.rect(645, 60, 120, 30)
+    context.fill()
+    context.closePath()
+
+    context.beginPath()
+    context.fillStyle = "rgb(140, 0, 0)"
+    context.font = "bold 22px Lato"
+    context.fillText("Fight Boss", 655, 83)
+    context.closePath()
+
+    if (mouseX > 645 && mouseX < 645 + 120 && mouseY > 60 & mouseY < 60 + 30) {
+        fightBossButtonColor = "rgb(40, 40, 40)" 
+
+        if (click) {
+            thingsToEmit.push("spawnBoss")
+        }
+    }
+    else {
+        fightBossButtonColor = "rgb(0, 0, 0)"
+    }
+}
+
 function drawPlayerXPBar() {
     var xp = getPlayer().xp, xpUntilNextLevel = getPlayer().xpUntilNextLevel, level = getPlayer().level
 
@@ -462,7 +524,7 @@ function drawPlayerXPBar() {
 
 function drawStageText() {
     var stage = getPlayer().stage
-    var enemiesLeftString = getPlayer().enemiesLeftOnStage + "/5"
+    var enemiesLeftString = getPlayer().isStuckOnBoss ? "" : getPlayer().enemiesLeftOnStage + "/5"
 
     context.beginPath()
     context.fillStyle = "rgb(0, 0, 0)"
@@ -586,6 +648,14 @@ function drawDamageMessages() {
 }
 
 var xpMessages = []
+function createXPMessage(xp) {
+    xpMessages.push({
+        x: Math.floor(Math.random() * 120) + 620,
+        y: 200,
+        text: xp
+    })
+}
+
 function drawXPMessages() {
     context.beginPath()
     context.font = "normal 30px Lato"
@@ -594,6 +664,33 @@ function drawXPMessages() {
         context.fillText(msg.text, msg.x, msg.y)
         msg.y += 1
         if (msg.y > canvas.height + 50) { xpMessages.splice(i, 1) }
+    })
+}
+
+function checkForNewItems() {
+    if (getPlayer().newItem) {
+        createNewItemMessage()
+        var player = getPlayer(); player.newItem = false; setPlayer(player)
+    }
+}
+
+var newItemMessages = []
+function createNewItemMessage() {
+    newItemMessages.push({
+        x: Math.floor(Math.random() * 20) + 620,
+        y: 200,
+        text: getPlayer().inventory[getPlayer().inventory.length - 1].name
+    })
+}
+
+function drawNewItemMessages() {
+    context.beginPath()
+    context.font = "normal 20px Lato"
+    context.fillStyle = "rgb(255, 190, 0)"
+    newItemMessages.forEach((msg, i) => {
+        context.fillText(msg.text, msg.x, msg.y)
+        msg.y += 1
+        if (msg.y > canvas.height + 50) { newItemMessages.splice(i, 1) }
     })
 }
 
@@ -673,7 +770,9 @@ function getPlayer() {
             stage: 1,
             enemiesLeftOnStage: 5,
             inventory: [],
-            equipment: []
+            equipment: [],
+            isStuckOnBoss: false,
+            newItem: false
         }
     }
     try {
@@ -695,7 +794,9 @@ function getPlayer() {
             stage: 1,
             enemiesLeftOnStage: 5,
             inventory: [],
-            equipment: []
+            equipment: [],
+            isStuckOnBoss: false,
+            newItem: false
         }
     } 
     return result
@@ -709,7 +810,11 @@ function getEnemy() {
     var result = localStorage.getItem("enemy")
     if (!result || result == "null" || result == null) { return {
         health: 5,
-        maxHealth: 5
+        maxHealth: 5,
+        boss: {
+            isBoss: false,
+            timeLeft: 0
+        }
     } }
     try {
         result = JSON.parse(result)
@@ -719,7 +824,10 @@ function getEnemy() {
         result = {
             health: 5,
             maxHealth: 5,
-            boss: false
+            boss: {
+                isBoss: false,
+                timeLeft: 0
+            }
         }
     }
     return result
@@ -747,7 +855,29 @@ function sendDataToServer() {
         }
         else if (items[0] == "dealDamage") {
             thingsToEmit.splice(i, 1)
+            var oldXp = getPlayer().xp, oldXpUntilNextLevel = getPlayer().xpUntilNextLevel
             socket.emit("dealDamage", Number(items[1]), function(data) {
+                setEnemy(data.enemy)
+                setPlayer(data.player)
+                if (getEnemy().health == getEnemy().maxHealth) {
+                    var xp = getPlayer().xp - oldXp
+                    if (xp <= 0) {
+                        xp = (oldXpUntilNextLevel - oldXp) + getPlayer().xp
+                    }
+                    createXPMessage(xp)
+                }
+            })
+        }
+        else if (items[0] == "bossDefeatedPlayer") {
+            thingsToEmit.splice(i, 1)
+            socket.emit("bossDefeatedPlayer", function(data) {
+                setEnemy(data.enemy)
+                setPlayer(data.player)
+            })
+        }
+        else if (items[0] == "spawnBoss") {
+            thingsToEmit.splice(i, 1)
+            socket.emit("spawnBoss", function(data) {
                 setEnemy(data.enemy)
                 setPlayer(data.player)
             })

@@ -14,16 +14,15 @@ function updatesItemsFromJSON() {
 
 function rollDropItem() {
     var player = Player.getPlayer()
-    var stage = player.stage, luck = player.luck
+    var stage = player.stage, luck = player.stats.luck * player.equipmentEffects.luckMultiplier
 
-    var rng = Math.floor(Math.random() * 10) + 1
-    rng += luck/8
-    rng -= stage/60
+    var rng = Math.floor(Math.random() * 100) + 1
+    rng += luck
 
-    if (rng >= 9.5) {
+    if (rng >= 95) {
         givePlayerRareItem()
     }
-    else if (rng >= 8) {
+    else if (rng >= 90) {
         givePlayerNormalItem()
     }
 }
@@ -31,7 +30,7 @@ function rollDropItem() {
 function givePlayerNormalItem() {
     var player = Player.getPlayer()
     var rng = Math.floor(Math.random() * 3) + 1
-    var tier = Math.floor(player.stage-1 / 5) + 1
+    var tier = Math.floor(player.stage / 10) + 1
 
     var item = {
         name: "",
@@ -44,19 +43,28 @@ function givePlayerNormalItem() {
             item.name = itemTierNames[tier-1] + " Sword"
             item.type = "sword"
             item.effect = "attack " + (1 + tier*0.05)
+            break
 
         case 2:
             item.name = itemTierNames[tier-1] + " Gloves"
             item.type = "gloves"
             item.effect = "attack " + (1 + tier*0.05)
+            break
         
         case 3:
             item.name = itemTierNames[tier-1] + " Ring"
             item.type = "ring"
             item.effect = "luck " + (1 + tier*0.05)
+            break
     }
 
-    player.inventory.push(item)
+    var inventoryAsString = JSON.stringify(player.inventory)
+    var itemAsString = JSON.stringify(item)
+    
+    if (!inventoryAsString.includes(itemAsString)) {
+        player.inventory.push(item)
+        player.newItem = true
+    }
     Player.setPlayer(player)
 }
 
@@ -73,5 +81,5 @@ function setPlayer(p) {
 }
 
 module.exports = {
-    init, rollDropItem, Player: "", setPlayer, itemTierNames: ""
+    init, rollDropItem, setPlayer
 }

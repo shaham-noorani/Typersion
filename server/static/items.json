@@ -7,8 +7,6 @@
             { "name": "Adventurer's Chestplate", "type": "chestplate", "effect": "attack 1.1"}
         ]
     },
-    "itemTierNames": {
-        "names": ["Bronze", "Silver", "Gold", "Platinum", "Paladium", "Mythril", "Dragon", " Hero's"]
-    }
+    "itemTierNames": ["Bronze", "Silver", "Gold", "Platinum", "Paladium", "Mythril", "Dragon", " Hero's"]
 }
 

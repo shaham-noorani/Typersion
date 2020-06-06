@@ -30,19 +30,25 @@ function checkForStageAdvance() {
     }
 }
 
-function applyPlayerEquipment() {
+function checkForNewEquipment() {
+    if (!player.newItem) return
+    var attackMultiplier = 1, luckMultiplier = 1
     player.equipment.forEach((item) => {
         var stat = item.effect.split(" ")[0]
         var mult = Number(item.effect.split(" ")[1])
 
-        if(stat == "luck") { player.stats.luck = Math.floor(player.stats.luck * mult) }
-        if(stat == "attack") { player.stats.attack = Math.floor(player.stats.attack * mult) }
+        if (stat == "luck") { luckMultiplier += mult - 1 }
+        if (stat == "attack") { attackMultiplier += mult - 1 }
     })
+    player.equipmentEffects = { 
+        attackMultiplier: attackMultiplier,
+        luckMultiplier: luckMultiplier 
+    }
 }
 
 function givePlayerXP() {
     player.xp += Math.floor(getXPUntilNextLevel(player.stage) / 5) + 1
-    player.enemiesLeftOnStage -= 1
+    if (!player.isStuckOnBoss) player.enemiesLeftOnStage -= 1
 }
 
 function getXPUntilNextLevel(level) {
@@ -62,10 +68,23 @@ function levelUpStat(stat) {
     if (stat == "attack") { player.stats.attack += 1}  
 }
 
+function defeatedByBoss() {
+    player.enemiesLeftOnStage = 2
+    player.isStuckOnBoss = true
+    Enemy.spawnEnemy()
+}
+
+function retryBoss() {
+    player.enemiesLeftOnStage = 1
+    player.isStuckOnBoss = false
+    Enemy.spawnBoss()
+}
+
 function completeChecks() {
-    if (!player) { return }
+    if (!player) return 
     checkForLevelUp()
     checkForStageAdvance()
+    checkForNewEquipment()
 }
 
 function setEnemy(e) {
@@ -78,5 +97,5 @@ function init() {
 
 module.exports = {
     getPlayer, setPlayer, givePlayerXP, levelUpStat, 
-    dealDamage, init, player: "", Enemy: "", completeChecks, setEnemy
+    dealDamage, init, player: "", Enemy: "", completeChecks, setEnemy, defeatedByBoss, retryBoss
 }
