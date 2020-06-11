@@ -430,29 +430,12 @@ function drawEnemyHealthBar() {
     context.closePath()
 }
 
-var timeBossSpawnedAt
 function drawBossTimer() {
-    var enemy = getEnemy()
-
-    if (enemy.boss.timeLeft <= 0) {
-        enemy.boss.timeLeft = 10.0
-        console.log("spawnboss from client")
-        timeBossSpawnedAt = new Date()
-    }
-
-    var timeElapsed = (new Date - timeBossSpawnedAt) / 1000
-
-    enemy.boss.timeLeft = 10 - timeElapsed 
-    setEnemy(enemy)
-
-    if (timeElapsed >= 10) {
-        thingsToEmit.push("bossDefeatedPlayer")
-        return
-    }
+    var timeLeft = getEnemy().boss.timeLeft
 
     context.beginPath()
     context.fillStyle = "rgb(200, 0, 0)"
-    context.rect(225, 40, 400 * ((10 - timeElapsed) / 10), 20)
+    context.rect(225, 40, 400 * ((timeLeft) / 10), 20)
     context.fill()
     context.closePath()
     
@@ -465,7 +448,7 @@ function drawBossTimer() {
     context.beginPath()
     context.fillStyle = "rgb(0, 0, 0)"
     context.font = "normal 25px Lato"
-    context.fillText("Time Left: " + (10 - timeElapsed).toFixed(1), 350, 30)
+    context.fillText("Time Left: " + (timeLeft).toFixed(1), 350, 30)
     context.closePath()
 
 }
@@ -488,7 +471,7 @@ function drawFightBossButton() {
         fightBossButtonColor = "rgb(40, 40, 40)" 
 
         if (click) {
-            thingsToEmit.push("spawnBoss")
+            thingsToEmit.push("retryBoss")
         }
     }
     else {
@@ -808,14 +791,17 @@ function setPlayer(player) {
 
 function getEnemy() {
     var result = localStorage.getItem("enemy")
-    if (!result || result == "null" || result == null) { return {
-        health: 5,
-        maxHealth: 5,
-        boss: {
-            isBoss: false,
-            timeLeft: 0
-        }
-    } }
+    if (!result || result == "null" || result == null) { 
+        return {
+            health: 5,
+            maxHealth: 5,
+            boss: {
+                isBoss: false,
+                timeLeft: 0,
+                spawnTime: 0
+            }
+        } 
+    }
     try {
         result = JSON.parse(result)
     } catch (error) {
@@ -826,7 +812,8 @@ function getEnemy() {
             maxHealth: 5,
             boss: {
                 isBoss: false,
-                timeLeft: 0
+                timeLeft: 0,
+                spawntime: 0
             }
         }
     }
@@ -841,6 +828,9 @@ function recieveDataFromServer() {
     if (quotes) { return }
     socket.on('quotes', (data) => {
         quotes = data
+    });
+    socket.on('bossTimer', (enemy) => {
+        setEnemy(enemy)
     });
 }
 
@@ -875,9 +865,9 @@ function sendDataToServer() {
                 setPlayer(data.player)
             })
         }
-        else if (items[0] == "spawnBoss") {
+        else if (items[0] == "retryBoss") {
             thingsToEmit.splice(i, 1)
-            socket.emit("spawnBoss", function(data) {
+            socket.emit("retryBoss", function(data) {
                 setEnemy(data.enemy)
                 setPlayer(data.player)
             })

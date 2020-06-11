@@ -75,6 +75,7 @@ function defeatedByBoss() {
 }
 
 function retryBoss() {
+    console.log("RETRY BOSS")
     player.enemiesLeftOnStage = 1
     player.isStuckOnBoss = false
     Enemy.spawnBoss()

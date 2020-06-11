@@ -32,6 +32,8 @@ function spawnBoss() {
     enemy.health = calcEnemyHealth() * 2
     enemy.maxHealth = enemy.health
     enemy.boss.isBoss = true
+    enemy.boss.spawnTime = new Date()
+    enemy.boss.timeLeft = 10
 }
 
 function getEnemy() {
@@ -49,7 +51,10 @@ function calcEnemyHealth() {
 }
 
 function completeChecks() {
-    checkIfEnemyIsDead()
+    if (enemy) {
+        checkIfEnemyIsDead()
+        if (enemy.boss.isBoss) updateBossTimer()
+    }
 }
 
 function setPlayer(p) {
@@ -57,6 +62,16 @@ function setPlayer(p) {
 }
 
 function init() {
+}
+
+function updateBossTimer() {
+    var now = new Date()
+    enemy.boss.timeLeft = 10 - (now - Date.parse(enemy.boss.spawnTime)) / 1000
+    console.log(enemy.boss.timeLeft)
+    if (enemy.boss.timeLeft <= 0) {
+        enemy.boss.isBoss = false
+        Player.defeatedByBoss()
+    }
 }
 
 module.exports = {

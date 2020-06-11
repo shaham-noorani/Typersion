@@ -9,7 +9,8 @@ var fs = require('fs')
 var helper = require("./helper")
 var Player = require("./player")
 var Enemy = require("./enemy")
-var Items = require("./items")
+var Items = require("./items");
+const enemy = require('./enemy');
 
 // Server
 var app = express();
@@ -52,6 +53,10 @@ function initGame() {
 
 function emitDataForClient() {
   io.emit("quotes", helper.getQuotes())
+  // if (Enemy.getEnemy())
+  if (Enemy.getEnemy() && Enemy.getEnemy().boss.isBoss) {
+    io.emit("bossTimer", Enemy.getEnemy())
+  }
 }
 
 function listenForEmitsFromClient() {
@@ -78,15 +83,7 @@ function listenForEmitsFromClient() {
       try { callback({ player: Player.getPlayer() }) }
       catch (err) { console.error(err) }
     })
-    socket.on('bossDefeatedPlayer', (callback) => {
-      Player.defeatedByBoss()
-      Player.completeChecks()
-      Enemy.completeChecks()
-
-      try { callback({ player: Player.getPlayer(), enemy: Enemy.getEnemy() }) }
-      catch (err) { console.error(err) }
-    })
-    socket.on('spawnBoss', (callback) => {
+    socket.on('retryBoss', function (callback) {
       Player.retryBoss()
       Player.completeChecks()
       Enemy.completeChecks()
