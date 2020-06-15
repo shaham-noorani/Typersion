@@ -688,6 +688,7 @@ function drawEnemyHealthBar() {
 
 function drawBossTimer() {
     var timeLeft = getEnemy().boss.timeLeft
+    if ((timeLeft).toFixed(1) <= 0.1) { thingsToEmit.push("dealDamage 0") }
 
     context.beginPath()
     context.fillStyle = "rgb(200, 0, 0)"
@@ -727,6 +728,8 @@ function drawFightBossButton() {
         fightBossButtonColor = "rgb(40, 40, 40)" 
 
         if (click) {
+            quoteInputElement.focus()
+            quoteInputElement.select()
             thingsToEmit.push("retryBoss")
         }
     }
