@@ -1,6 +1,4 @@
 var Items = require("./items")
-var fs = require("fs") 
-var path = require('path')
 
 var enemy
 var Player
@@ -67,7 +65,6 @@ function init() {
 function updateBossTimer() {
     var now = new Date()
     enemy.boss.timeLeft = 10 - (now - Date.parse(enemy.boss.spawnTime)) / 1000
-    console.log(enemy.boss.timeLeft)
     if (enemy.boss.timeLeft <= 0) {
         enemy.boss.isBoss = false
         Player.defeatedByBoss()

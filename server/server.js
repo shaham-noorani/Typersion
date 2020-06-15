@@ -3,14 +3,12 @@ var express = require('express');
 var http = require('http');
 var path = require('path');
 var socketIO = require('socket.io');
-var fs = require('fs')
 
 // Adjacent Files
 var helper = require("./helper")
 var Player = require("./player")
 var Enemy = require("./enemy")
 var Items = require("./items");
-const enemy = require('./enemy');
 
 // Server
 var app = express();
@@ -87,6 +85,13 @@ function listenForEmitsFromClient() {
       Player.retryBoss()
       Player.completeChecks()
       Enemy.completeChecks()
+
+      try { callback({ player: Player.getPlayer(), enemy: Enemy.getEnemy() }) }
+      catch (err) { console.error(err) }
+    })
+    socket.on('equip', function(item, callback) {
+      Player.equipItem(item)
+      Player.completeChecks()
 
       try { callback({ player: Player.getPlayer(), enemy: Enemy.getEnemy() }) }
       catch (err) { console.error(err) }

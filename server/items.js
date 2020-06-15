@@ -14,7 +14,7 @@ function updatesItemsFromJSON() {
 
 function rollDropItem() {
     var player = Player.getPlayer()
-    var stage = player.stage, luck = player.stats.luck * player.equipmentEffects.luckMultiplier
+    var luck = player.stats.luck * player.equipmentEffects.luckMultiplier
 
     var rng = Math.floor(Math.random() * 100) + 1
     rng += luck
@@ -47,7 +47,7 @@ function givePlayerNormalItem() {
 
         case 2:
             item.name = itemTierNames[tier-1] + " Gloves"
-            item.type = "gloves"
+            item.type = "glove"
             item.effect = "attack " + (1 + tier*0.05)
             break
         

@@ -2,6 +2,7 @@ var canvas = document.getElementById("game")
 var context = canvas.getContext("2d")
 
 var mouseX = 0
+
 var mouseY = 0
 var click = false
 
@@ -228,7 +229,6 @@ function title() {
 }
 
 var goOutButtonColor = "rgb(200, 200, 200)"
-var statsButtonColor = "rgb(200, 200, 200)"
 var inventoryButtonColor = "rgb(200, 200, 200)"
 var backButtonColor = "rgb(200, 200, 200)"
 function adventure() {
@@ -248,19 +248,13 @@ function adventure() {
 
     context.beginPath()
     context.fillStyle = goOutButtonColor
-    context.rect(80, 220, 150, 40)
-    context.fill()
-    context.closePath()
-
-    context.beginPath()
-    context.fillStyle = statsButtonColor
-    context.rect(330, 220, 150, 40)
+    context.rect(180, 220, 150, 40)
     context.fill()
     context.closePath()
 
     context.beginPath()
     context.fillStyle = inventoryButtonColor
-    context.rect(580, 220, 150, 40)
+    context.rect(480, 220, 150, 40)
     context.fill()
     context.closePath()
 
@@ -271,9 +265,8 @@ function adventure() {
     context.fillText("Adventure", 320, 80)
     context.fillStyle = "rgb(100, 130, 180)"
     context.font = "normal 20px Lato"
-    context.fillText("Go out", 120, 250)
-    context.fillText("Stats", 380, 250)
-    context.fillText("Inventory", 610, 250)
+    context.fillText("Go out", 220, 250)
+    context.fillText("Inventory", 510, 250)
     context.font = "normal 15px Lato"
     context.fillText("Back", 105, 40)
     context.closePath()
@@ -288,7 +281,7 @@ function adventure() {
         }
     }
     // check if go out button is being hovered over
-    else if (mouseX > 80 && mouseX < 80 + 150 && mouseY > 220 & mouseY < 220 + 40) {
+    else if (mouseX > 180 && mouseX < 180 + 150 && mouseY > 220 & mouseY < 220 + 40) {
         goOutButtonColor = "rgb(255, 255, 255)"
 
         if (click) {
@@ -299,23 +292,18 @@ function adventure() {
             goOut()
         }
     }
-    // check if stats button is being hovered over
-    else if (mouseX > 330 && mouseX < 330 + 150 && mouseY > 220 & mouseY < 220 + 40) {
-        statsButtonColor = "rgb(255, 255, 255)"
-        
-        if (click) {
-        }
-    }
     // check if inventory button is being hovered over
-    else if (mouseX > 580 && mouseX < 580 + 150 && mouseY > 220 & mouseY < 220 + 40) {
+    else if (mouseX > 480 && mouseX < 480 + 150 && mouseY > 220 & mouseY < 220 + 40) {
         inventoryButtonColor = "rgb(255, 255, 255)"
         
         if (click) {
+            currentScreen = "inventory"
+            document.getElementById("quoteContainer").style.display = "none"
+            inventory()
         }
     }
     else {
         goOutButtonColor = "rgb(200, 200, 200)"
-        statsButtonColor = "rgb(200, 200, 200)"
         inventoryButtonColor = "rgb(200, 200, 200)"
         backButtonColor = "rgb(200, 200, 200)"
     }
@@ -386,6 +374,272 @@ function goOut() {
         backButtonColor = "rgb(200, 200, 200)"
     }
     click = false
+}
+
+var backButtonColor = "rgb(200, 200, 200)"
+var ringBoxColor = "rgb(127, 127, 127, 0.8)"
+var gloveBoxColor = "rgb(127, 127, 127, 0.8)"
+var swordBoxColor = "rgb(127, 127, 127, 0.8)"
+var ringTextColor = gloveTextColor = swordTextColor = "rgb(50, 50, 50)"
+var itemTypeSelected = "sword"
+function inventory() {
+    if (currentScreen == "inventory") {
+        requestAnimationFrame(inventory)
+    }
+    context.clearRect(0, 0, canvas.width, canvas.height)
+
+    context.beginPath()
+    context.fillStyle = backButtonColor
+    context.rect(60, 20, 70, 30)
+    context.fill()
+    context.closePath()
+
+    // back button
+    context.beginPath()
+    context.fillStyle = "rgb(100, 130, 180)"
+    context.font = "normal 15px Lato"
+    context.fillText("Back", 80, 40)
+    context.closePath()
+    
+    // equipment boxes 
+    context.beginPath()
+    context.fillStyle = swordBoxColor
+    context.rect(150, 50, 100, 100)
+    context.fill()
+    context.closePath()
+    context.beginPath()
+    context.fillStyle = gloveBoxColor
+    context.rect(300, 50, 100, 100)
+    context.fill()
+    context.closePath()
+    context.beginPath()
+    context.fillStyle = ringBoxColor
+    context.rect(450, 50, 100, 100)
+    context.fill()
+    context.closePath()
+
+    // equipment box titles
+    context.beginPath()
+    context.font = "normal 20px Lato"
+    context.fillStyle = swordTextColor
+    context.fillText("Sword", 170, 40)
+    context.fillStyle = gloveTextColor
+    context.fillText("Glove", 320, 40)
+    context.fillStyle = ringTextColor
+    context.fillText("Ring", 470, 40)
+    context.closePath()
+
+    // inventory box
+    context.beginPath()
+    context.fillStyle = "rgb(255, 206, 47, 0.8)"
+    context.rect(60, 180, 490, 150)
+    context.fill()
+    context.closePath()
+
+    // inventory lines
+    context.beginPath()
+    context.moveTo(60, 255)
+    context.lineTo(550, 255)
+    context.stroke()
+    context.moveTo(182, 180)
+    context.lineTo(182, 330)
+    context.stroke()
+    context.moveTo(305, 180)
+    context.lineTo(305, 330)
+    context.stroke()
+    context.moveTo(428, 180)
+    context.lineTo(428, 330)
+    context.stroke()
+    context.closePath()
+
+    drawSelectedItemBox()
+    drawSelectedItemText()
+
+    // display inventory of selected item (i.e. sword)
+    var itemNumber = 0
+    getPlayer().inventory.forEach(item => {
+        if (item.type == itemTypeSelected) {
+            var x = itemNumber <= 3 ? 60 + itemNumber * 122 : 60 + (itemNumber-4) * 122
+            var y = itemNumber <= 3 ? 180 : 255
+            drawItem(item.type, x, y)
+            itemNumber++
+        }
+    })
+
+    drawEquipedItems()
+    drawStatsTextForInventory()
+
+    // back button
+    if (mouseX > 60 && mouseX < 60 + 70 && mouseY > 20 & mouseY < 20 + 30) {
+        backButtonColor = "rgb(255, 255, 255)" 
+
+        if (click) {
+            document.getElementById("quoteContainer").style.display = "block"
+            currentScreen = "adventure"
+            click = false
+            adventure()
+        }
+    }
+    // equipped item boxes
+    else if (mouseY > 50 & mouseY < 50 + 100) {
+        // sword box
+        if (mouseX > 150 && mouseX < 150 + 100) {
+            swordBoxColor = "rgb(157, 157, 157, 0.8)"
+            ringBoxColor = "rgb(127, 127, 127, 0.6)"
+            gloveBoxColor = "rgb(127, 127, 127, 0.6)"
+
+            if (click) {
+                swordTextColor = "rgb(0, 0, 0)"
+                ringTextColor = gloveTextColor = "rgb(50, 50, 50)"
+                itemTypeSelected = "sword"
+                click = false
+            }
+        }
+        // glove box
+        if (mouseX > 300 && mouseX < 300 + 100) {
+            gloveBoxColor = "rgb(157, 157, 157, 0.8)"
+            ringBoxColor = "rgb(127, 127, 127, 0.6)"
+            swordBoxColor = "rgb(127, 127, 127, 0.6)"
+
+            if (click) {
+                gloveTextColor = "rgb(0, 0, 0)"
+                ringTextColor = swordTextColor = "rgb(50, 50, 50)"
+                itemTypeSelected = "glove"
+                click = false
+            }
+        }
+        //ring box
+        if (mouseX > 450 && mouseX < 450 + 100) {
+            ringBoxColor = "rgb(157, 157, 157, 0.8)"
+            gloveBoxColor = "rgb(127, 127, 127, 0.6)"
+            swordBoxColor = "rgb(127, 127, 127, 0.6)"
+
+            if (click) {
+                ringTextColor = "rgb(0, 0, 0)"
+                gloveTextColor = swordTextColor = "rgb(50, 50, 50)"
+                itemTypeSelected = "ring"
+                click = false
+            }
+        }
+    }
+    // reset highlight colors for boxes and back button
+    else {
+        backButtonColor = "rgb(200, 200, 200)"
+        ringBoxColor = "rgb(127, 127, 127, 0.6)"
+        gloveBoxColor = "rgb(127, 127, 127, 0.6)"
+        swordBoxColor = "rgb(127, 127, 127, 0.6)"
+    }
+    click = false
+}
+
+var selectedBox = 0
+function drawSelectedItemBox() {
+    var x = selectedBox <= 3 ? 60 + selectedBox * 122 : 60 + (selectedBox-4) * 122
+    var y = selectedBox <= 3 ? 180 : 255
+
+    context.beginPath()
+    context.fillStyle = "rgb(240, 240, 240, 0.4)"
+    context.rect(x, y, 121, 75)
+    context.fill()
+    context.closePath()
+}
+
+function drawSelectedItemText() {
+    var item
+    var count = 0
+    var inv = getPlayer().inventory
+
+    for (var i = 0; i < inv.length; i++) {
+        if (inv[i].type == itemTypeSelected) {
+            if (count == selectedBox) {
+                item = inv[i]
+                break
+            }
+            count++
+        }
+        // If a blank box is selected
+        if (i == inv.length-1) {
+            return
+        }
+    }
+
+    var effectPercentage = Math.round((parseFloat(item.effect.split(" ")[1]) - 1) * 100)
+    
+    
+    context.beginPath()
+    context.fillStyle = "rgb(0,0,0,0.5)"
+    context.rect(580, 180, 160, 147)
+    context.fill()
+    context.font = "normal 15px Lato"
+    context.fillStyle = "rgb(240,240,240)"
+    context.fillText("Name: " + item.name, 585, 200)
+    context.fillText("Effect: " + effectPercentage + "% " + item.effect.split(" ")[0], 585, 230)
+    context.closePath()
+}
+
+function drawStatsTextForInventory() {
+    var player = getPlayer()
+    var attack = Math.floor(player.stats.attack * player.equipmentEffects.attackMultiplier)
+    var luck = Math.floor(player.stats.luck * player.equipmentEffects.luckMultiplier)
+
+    context.beginPath()
+    context.fillStyle = "rgb(0,0,0,0.5)"
+    context.rect(580, 30, 160, 147)
+    context.fill()
+    context.font = "normal 15px Lato"
+    context.fillStyle = "rgb(240,240,240)"
+    context.fillText("Attack: " + attack, 585, 50)
+    context.fillText("Luck: " + luck, 585, 80)
+    context.closePath()
+
+
+}
+
+function drawEquipedItems() {
+    getPlayer().equipment.forEach(item => {
+        if (item.type == "sword") {
+            drawItem("sword", 140, 60)
+        }
+        else if (item.type == "glove") {
+            drawItem("glove", 290, 60)
+        }
+        else {
+            drawItem("ring", 440, 60)
+        }
+    })
+}
+
+var swordImg = new Image(50, 50)
+var gloveImg = new Image(50, 50)
+var ringImg = new Image(50, 50)
+swordImg.src = "static/sword.png"
+gloveImg.src = "static/glove.png"
+ringImg.src = "static/ring.png"
+function drawItem(type, x, y) {
+    sprites = { "sword": swordImg, "glove": gloveImg, "ring": ringImg }
+    context.drawImage(sprites[type], x + 20, y)
+}
+
+function equipSelectedItem() {
+    var item
+    var count = 0
+    var inv = getPlayer().inventory
+
+    for (var i = 0; i < inv.length; i++) {
+        if (inv[i].type == itemTypeSelected) {
+            if (count == selectedBox) {
+                item = inv[i]
+                break
+            }
+            count++
+        }
+        // If a blank box is selected
+        if (i == inv.length-1) {
+            return
+        }
+    }
+
+    thingsToEmit.push("equip " + JSON.stringify(item))
 }
 
 playerImg = new Image(200, 80)
@@ -600,7 +854,7 @@ function createDamageMessage(multiplier) {
     damageMessages.push({
         x: Math.floor(Math.random() * 120) + 620,
         y: 200,
-        text: formatNumber(getPlayer().stats.attack * multiplier)
+        text: formatNumber(Math.floor(getPlayer().stats.attack * getPlayer().equipmentEffects.attackMultiplier * multiplier))
     })
 }
 
@@ -682,8 +936,8 @@ function keyPressed(event)
 {
     switch(event.keyCode)
     {
-        case 32:
         // Spacebar
+        case 32:
             if (currentScreen == "goOut") {
                 var quoteArray = quoteDisplayElement.querySelectorAll('span')
                 var playerInputArray = quoteInputElement.value.split('')
@@ -705,6 +959,50 @@ function keyPressed(event)
                 }
             }
             break
+        
+        // arrow key up
+        case 38:
+            if (currentScreen == "inventory") {
+                if (selectedBox > 3) {
+                    selectedBox -= 4
+                }
+            }
+            break
+        
+        // arrow key left    
+        case 37:
+            if (currentScreen == "inventory") {
+                if (selectedBox != 0 && selectedBox != 4) {
+                    selectedBox -= 1
+                }
+            }
+            break
+
+        // arrow key right    
+        case 39:
+            if (currentScreen == "inventory") {
+                if (selectedBox != 3 && selectedBox != 7) {
+                    selectedBox += 1
+                }
+            }
+            break
+
+        // arrow key down    
+        case 40:
+            if (currentScreen == "inventory") {
+                if (selectedBox < 4) {
+                    selectedBox += 4
+                }
+            }
+            break
+        
+        // enter key
+        case 13:
+            if (currentScreen == "inventory") {
+                equipSelectedItem()
+            }
+            break
+
     }
 }
 
@@ -869,6 +1167,12 @@ function sendDataToServer() {
             thingsToEmit.splice(i, 1)
             socket.emit("retryBoss", function(data) {
                 setEnemy(data.enemy)
+                setPlayer(data.player)
+            })
+        }
+        else if (items[0] == "equip") {
+            thingsToEmit.splice(i, 1)
+            socket.emit("equip", JSON.parse(items[1] + " " + items[2] + " " + items[3]), function(data) {
                 setPlayer(data.player)
             })
         }

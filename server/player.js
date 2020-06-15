@@ -1,8 +1,3 @@
-var fs = require('fs')
-var Helper = require("./helper")
-var path = require('path')
-// var items = require("./items")
-
 var player
 var Enemy
 
@@ -31,7 +26,6 @@ function checkForStageAdvance() {
 }
 
 function checkForNewEquipment() {
-    if (!player.newItem) return
     var attackMultiplier = 1, luckMultiplier = 1
     player.equipment.forEach((item) => {
         var stat = item.effect.split(" ")[0]
@@ -41,8 +35,8 @@ function checkForNewEquipment() {
         if (stat == "attack") { attackMultiplier += mult - 1 }
     })
     player.equipmentEffects = { 
-        attackMultiplier: attackMultiplier,
-        luckMultiplier: luckMultiplier 
+        attackMultiplier: Math.round(attackMultiplier*100)/100,
+        luckMultiplier: Math.round(luckMultiplier*100)/100 
     }
 }
 
@@ -57,9 +51,20 @@ function getXPUntilNextLevel(level) {
 
 function dealDamage(multiplier) {
     var enemy = Enemy.getEnemy()
-    var damage = player.stats.attack * player.equipmentEffects.attackMultiplier * multiplier
+    var damage = Math.floor(player.stats.attack * player.equipmentEffects.attackMultiplier * multiplier)
     enemy.health -= damage
     Enemy.setEnemy(enemy)
+}
+
+function equipItem(item) {
+    for (var i = 0; i < player.equipment.length; i++) {
+        if (player.equipment[i].type == item.type) {
+            player.equipment.splice(i, 1)
+            player.equipment.push(item)
+            return
+        }
+    }
+    player.equipment.push(item)
 }
 
 function levelUpStat(stat) {
@@ -75,7 +80,6 @@ function defeatedByBoss() {
 }
 
 function retryBoss() {
-    console.log("RETRY BOSS")
     player.enemiesLeftOnStage = 1
     player.isStuckOnBoss = false
     Enemy.spawnBoss()
@@ -98,5 +102,5 @@ function init() {
 
 module.exports = {
     getPlayer, setPlayer, givePlayerXP, levelUpStat, 
-    dealDamage, init, player: "", Enemy: "", completeChecks, setEnemy, defeatedByBoss, retryBoss
+    dealDamage, init, player: "", Enemy: "", completeChecks, setEnemy, defeatedByBoss, retryBoss, equipItem
 }
