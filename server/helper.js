@@ -1,6 +1,8 @@
 var fs = require("fs")
 var path = require('path')
 
+var quotes
+
 function formatNumber(val) {
     var result = val
     if (val >= 1000000000) {
