@@ -563,6 +563,8 @@ function drawSelectedItemText() {
         }
     }
 
+    if (!item) { return } // if inventory is empty
+
     var effectPercentage = Math.round((parseFloat(item.effect.split(" ")[1]) - 1) * 100)
     
     
