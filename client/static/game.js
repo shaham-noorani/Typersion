@@ -1029,7 +1029,7 @@ function init() {
 
     setInterval(() => {
         sendDataToServer()
-    }, 1000 / 600)
+    }, 1)
 
     document.getElementById("resetWPMButton").style.display = "none"
     document.getElementById("backButton").style.display = "none"

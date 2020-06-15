@@ -34,7 +34,7 @@ listenForEmitsFromClient()
 
 setInterval(() => {
   secondlyProcesses()
-}, 100)
+}, 10)
 
 // Starts the server.
 server.listen(PORT, function() {
