@@ -916,6 +916,11 @@ function createXPMessage(xp) {
 }
 
 function drawXPMessages() {
+    getPlayer().xpMessagesToAdd.forEach((xp) => {
+        createXPMessage(xp)
+    })
+    var p = getPlayer(); p.xpMessagesToAdd = []; setPlayer(p)
+
     context.beginPath()
     context.font = "normal 30px Lato"
     context.fillStyle = "rgb(0, 0, 200, 0.6)"
@@ -1075,7 +1080,8 @@ function getPlayer() {
             inventory: [],
             equipment: [],
             isStuckOnBoss: false,
-            newItem: false
+            newItem: false,
+            xpMessagesToAdd: []
         }
     }
     try {
@@ -1099,7 +1105,8 @@ function getPlayer() {
             inventory: [],
             equipment: [],
             isStuckOnBoss: false,
-            newItem: false
+            newItem: false,
+            xpMessagesToAdd: []
         }
     } 
     return result
@@ -1154,6 +1161,9 @@ function recieveDataFromServer() {
         e.boss.timeLeft = enemy.boss.timeLeft
         setEnemy(e)
     });
+    socket.on('createXPMessage', (xp) => {
+        createXPMessage(xp)
+    })
 }
 
 function sendDataToServer() {
@@ -1167,17 +1177,17 @@ function sendDataToServer() {
         }
         else if (items[0] == "dealDamage") {
             thingsToEmit.splice(i, 1)
-            var oldXp = getPlayer().xp, oldXpUntilNextLevel = getPlayer().xpUntilNextLevel
+            // var oldXp = getPlayer().xp, oldXpUntilNextLevel = getPlayer().xpUntilNextLevel
             socket.emit("dealDamage", Number(items[1]), function(data) {
                 setEnemy(data.enemy)
                 setPlayer(data.player)
-                if (getEnemy().health == getEnemy().maxHealth) {
-                    var xp = getPlayer().xp - oldXp
-                    if (xp <= 0) {
-                        xp = (oldXpUntilNextLevel - oldXp) + getPlayer().xp
-                    }
-                    createXPMessage(xp)
-                }
+                // if (getEnemy().health == getEnemy().maxHealth) {
+                //     var xp = getPlayer().xp - oldXp
+                //     if (xp <= 0) {
+                //         xp = (oldXpUntilNextLevel - oldXp) + getPlayer().xp
+                //     }
+                //     createXPMessage(xp)
+                // }
             })
         }
         else if (items[0] == "bossDefeatedPlayer") {

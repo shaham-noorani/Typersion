@@ -41,7 +41,9 @@ function applyPlayerEquipment() {
 }
 
 function givePlayerXP() {
-    player.xp += Math.floor(getXPUntilNextLevel(player.stage) / 5) + 1
+    var xp = Math.floor(getXPUntilNextLevel(player.stage) / 5) + 1
+    player.xp += xp
+    player.xpMessagesToAdd.push(xp)
     if (!player.isStuckOnBoss) player.enemiesLeftOnStage -= 1
 }
 
