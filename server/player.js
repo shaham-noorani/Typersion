@@ -27,9 +27,8 @@ function checkForStageAdvance() {
 
 function checkForNewEquipment() {
     if (!player.newItem) { return }
-    console.log("lmao")
     var attackMultiplier = 1, luckMultiplier = 1
-    player.equipment.forEach((item) => {
+    player.equipment.forEach((item) => { // ex: item.effect = "luck 1.1"
         var stat = item.effect.split(" ")[0]
         var mult = Number(item.effect.split(" ")[1])
 

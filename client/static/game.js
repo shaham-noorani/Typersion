@@ -20,6 +20,7 @@ canvas.addEventListener('click', function(evt) {
 })
 
 quoteInputElement.addEventListener('input', () => {
+    // disable typing in the input box in any mode except for free play and adventure > "go out"
     if (!(currentScreen == "goOut" || currentScreen == "freePlay")) {
         return
     }
@@ -27,6 +28,7 @@ quoteInputElement.addEventListener('input', () => {
     var quoteArray = quoteDisplayElement.querySelectorAll('span')
     var playerInputArray = quoteInputElement.value.split('')
 
+    // Doesn't register if the first input is a space
     if (playerInputArray[0] == " ") {
         quoteInputElement.value = ""
         playerInputArray = ""
@@ -360,6 +362,7 @@ function goOut() {
     context.fillText("Back", 80, 40)
     context.closePath()
 
+    // back button hover and click
     if (mouseX > 60 && mouseX < 60 + 70 && mouseY > 20 & mouseY < 20 + 30) {
         backButtonColor = "rgb(255, 255, 255)" 
 
@@ -388,13 +391,14 @@ function inventory() {
     }
     context.clearRect(0, 0, canvas.width, canvas.height)
 
+    // back button box
     context.beginPath()
     context.fillStyle = backButtonColor
     context.rect(60, 20, 70, 30)
     context.fill()
     context.closePath()
 
-    // back button
+    // back button text
     context.beginPath()
     context.fillStyle = "rgb(100, 130, 180)"
     context.font = "normal 15px Lato"
@@ -665,17 +669,20 @@ function drawEnemy() {
 function drawEnemyHealthBar() {
     var health = getEnemy().health, maxHealth = getEnemy().maxHealth
 
+    // blue background box
     context.beginPath()
     context.fillStyle = "rgb(100, 130, 180, 0.8)"
     context.rect(610, 110, 160, 60)
     context.fill()
     context.closePath()
     
+    // draw solid red dynamic health bar
     context.beginPath()
     context.fillStyle = "rgb(200, 0, 0)"
     context.rect(620, 180, 140 * (health / maxHealth), 20)
     context.fill()
 
+    // draw light red background of health bar
     context.fillStyle = "rgb(200, 0, 0, 0.2)"
     context.rect(620, 180, 140, 20)
     context.fill()
@@ -690,12 +697,15 @@ function drawBossTimer() {
     var timeLeft = getEnemy().boss.timeLeft
     if ((timeLeft).toFixed(1) <= 0.1) { thingsToEmit.push("dealDamage 0") }
 
+
+    // dynamic boss timer
     context.beginPath()
     context.fillStyle = "rgb(200, 0, 0)"
     context.rect(225, 40, 400 * ((timeLeft) / 10), 20)
     context.fill()
     context.closePath()
     
+    // light red timer background
     context.beginPath()
     context.fillStyle = "rgb(200, 0, 0, 0.2)"
     context.rect(225, 40, 400, 20)
@@ -724,6 +734,7 @@ function drawFightBossButton() {
     context.fillText("Fight Boss", 655, 83)
     context.closePath()
 
+    // button hover and click
     if (mouseX > 645 && mouseX < 645 + 120 && mouseY > 60 & mouseY < 60 + 30) {
         fightBossButtonColor = "rgb(40, 40, 40)" 
 
@@ -747,11 +758,13 @@ function drawPlayerXPBar() {
     context.fill()
     context.closePath()
     
+    // dynamic xp bar
     context.beginPath()
     context.fillStyle = "rgb(66, 155, 245)"
     context.rect(405, 320, 140 * (xp / xpUntilNextLevel), 20)
     context.fill()
 
+    // light blue bar background
     context.fillStyle = "rgb(66, 155, 245, 0.6)"
     context.rect(405, 320, 140, 20)
     context.fill()
@@ -779,12 +792,14 @@ function drawStageText() {
 
 function promptUpdateStats() {
     if (getPlayer().ap > 0) {
+        // yellow background box
         context.beginPath()
         context.fillStyle = "rgb(255, 215, 0, 0.6)"
         context.rect(90, 90, 150, 100)
         context.fill()
         context.closePath()
 
+        // stat increment buttons
         context.beginPath()
         context.fillStyle = "rgb(255, 255, 255)"
         context.rect(200, 125, 30, 20)
@@ -802,9 +817,11 @@ function promptUpdateStats() {
         context.fillText("+", 210, 177)
         context.closePath()
 
+        // attack increment button
         if (mouseX > 200 && mouseX < 230 && mouseY > 125 && mouseY < 145 && click) {
             thingsToEmit.push("levelUpPlayer attack")
         }
+        // luck increment button
         else if (mouseX > 200 && mouseX < 230 && mouseY > 160 && mouseY < 180 && click) {
             thingsToEmit.push("levelUpPlayer luck")
         }
@@ -1029,7 +1046,7 @@ function init() {
 
     setInterval(() => {
         sendDataToServer()
-    }, 1)
+    }, 10)
 
     document.getElementById("resetWPMButton").style.display = "none"
     document.getElementById("backButton").style.display = "none"

@@ -25,6 +25,7 @@ app.get('/', function(request, response) {
   response.sendFile(path.join(__dirname, '../client/static/index.html'));
 });
 
+// Server
 var server = http.Server(app);
 var io = socketIO(server);
 
