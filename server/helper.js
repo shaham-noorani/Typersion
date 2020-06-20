@@ -1,7 +1,7 @@
 var fs = require("fs")
 var path = require('path')
 
-var quotes
+var inspirationalQuotes, southParkQuotes
 
 function formatNumber(val) {
     var result = val
@@ -17,22 +17,35 @@ function formatNumber(val) {
     return result
 }
 
-function readQuotesJSON() {
-    fs.readFile(path.join(__dirname, "static/quotes.json") , (err, data) => {
+function readInspirationalQuotesJSON() {
+    fs.readFile(path.join(__dirname, "static/inspirational_quotes.json") , (err, data) => {
         if (err) { console.error(err) }
-            quotes = JSON.parse(data).quotes
-            return quotes
+            inspirationalQuotes = JSON.parse(data).quotes
+            return inspirationalQuotes
+        })
+}
+
+function readSouthParkQuotesJSON() {
+    fs.readFile(path.join(__dirname, "static/south_park_quotes.json") , (err, data) => {
+        if (err) { console.error(err) }
+            southParkQuotes = JSON.parse(data).quotes
+            return southParkQuotes
         })
 }
 
 function init() {
-    readQuotesJSON()
+    readInspirationalQuotesJSON()
+    readSouthParkQuotesJSON()
 }
 
-function getQuotes() {
-    return quotes
+function getInspirationalQuotes() {
+    return inspirationalQuotes
+}
+
+function getSouthParkQuotes() {
+    return southParkQuotes
 }
 
 module.exports = {
-    formatNumber, readQuotesJSON, quotes: readQuotesJSON(), init, getQuotes
+    formatNumber, readInspirationalQuotesJSON, readSouthParkQuotesJSON, quotes: readInspirationalQuotesJSON(), init, getInspirationalQuotes, getSouthParkQuotes
 }

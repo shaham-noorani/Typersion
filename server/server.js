@@ -51,7 +51,8 @@ function initGame() {
 }
 
 function emitDataForClient() {
-  io.emit("quotes", helper.getQuotes())
+  io.emit("southParkQuotes", helper.getSouthParkQuotes())
+  io.emit("inspirationalQuotes", helper.getInspirationalQuotes())
 
   if (Enemy.getEnemy() && Enemy.getEnemy().boss.isBoss) {
     io.emit("bossTimer", Enemy.getEnemy())

@@ -6,6 +6,10 @@ var mouseX = 0
 var mouseY = 0
 var click = false
 
+var quotesSource = "inspirational"
+
+var inspirationalQuotes, southParkQuotes
+
 var currentScreen
 var thingsToEmit = []
 
@@ -76,6 +80,7 @@ function setMouseXY(event) {
 var quotes = ""
 var lastRan
 function getRandomQuote() {
+    quotes = quotesSource == "southPark" ? southParkQuotes : inspirationalQuotes
     quoteInputElement.value = ""
     var ran = Math.floor(Math.random() * quotes.length) + 1
 
@@ -196,6 +201,13 @@ function title() {
     context.fillText("Adventure", w * 0.32, h * 0.57)
     context.fillText("Freeplay", w * 0.64, h * 0.57)
     context.closePath()
+
+    if (quoteInputElement.value == "lmao") {
+        quotesSource = "southPark"
+    }
+    if (quoteInputElement.value == "classy") {
+        quotesSource = "inspirational"
+    }
 
     // check if freeplay button is being hovered over
     if (mouseX > w * 0.58 && mouseX < w * 0.78 && mouseY > h * 0.5 & mouseY < h * 0.6) {
@@ -916,9 +928,12 @@ function createXPMessage(xp) {
 }
 
 function drawXPMessages() {
-    getPlayer().xpMessagesToAdd.forEach((xp) => {
+    try { getPlayer().xpMessagesToAdd.forEach((xp) => {
         createXPMessage(xp)
-    })
+    }) } catch (error) {
+        setPlayer(null)
+        setEnemy(null)
+    }
     var p = getPlayer(); p.xpMessagesToAdd = []; setPlayer(p)
 
     context.beginPath()
@@ -1152,9 +1167,11 @@ function setEnemy(enemy) {
 }
 
 function recieveDataFromServer() {
-    if (quotes) { return }
-    socket.on('quotes', (data) => {
-        quotes = data
+    socket.on('inspirationalQuotes', (data) => {
+        inspirationalQuotes = data
+    });
+    socket.on('southParkQuotes', (data) => {
+        southParkQuotes = data
     });
     socket.on('bossTimer', (enemy) => {
         var e = getEnemy()
