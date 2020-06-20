@@ -159,7 +159,6 @@ function backToTitle() {
     document.getElementById("backButton").style.display = "none"
     quoteDisplayElement.innerHTML = ''
     quoteInputElement.value = ""
-    quoteInputElement.readOnly = true
     document.getElementById("quoteContainer").classList = "quote-container"
 
     currentScreen = "title"
@@ -203,10 +202,12 @@ function title() {
     context.closePath()
 
     if (quoteInputElement.value == "lmao") {
+        quoteInputElement.value = "South Park Quotes Activated"
         quotesSource = "southPark"
     }
     if (quoteInputElement.value == "classy") {
         quotesSource = "inspirational"
+        quoteInputElement.value = "A man of culture, I see."
     }
 
     // check if freeplay button is being hovered over
@@ -1071,7 +1072,6 @@ function init() {
     document.getElementById("resetWPMButton").style.display = "none"
     document.getElementById("backButton").style.display = "none"
     currentScreen = "title"
-    quoteInputElement.readOnly = true
 
     title()
 }
