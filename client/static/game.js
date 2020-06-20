@@ -1150,7 +1150,9 @@ function recieveDataFromServer() {
         quotes = data
     });
     socket.on('bossTimer', (enemy) => {
-        setEnemy(enemy)
+        var e = getEnemy()
+        e.boss.timeLeft = enemy.boss.timeLeft
+        setEnemy(e)
     });
 }
 

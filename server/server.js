@@ -52,7 +52,7 @@ function initGame() {
 
 function emitDataForClient() {
   io.emit("quotes", helper.getQuotes())
-  // if (Enemy.getEnemy())
+
   if (Enemy.getEnemy() && Enemy.getEnemy().boss.isBoss) {
     io.emit("bossTimer", Enemy.getEnemy())
   }

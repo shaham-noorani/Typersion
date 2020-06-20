@@ -25,8 +25,7 @@ function checkForStageAdvance() {
     }
 }
 
-function checkForNewEquipment() {
-    if (!player.newItem) { return }
+function applyPlayerEquipment() {
     var attackMultiplier = 1, luckMultiplier = 1
     player.equipment.forEach((item) => { // ex: item.effect = "luck 1.1"
         var stat = item.effect.split(" ")[0]
@@ -66,6 +65,7 @@ function equipItem(item) {
         }
     }
     player.equipment.push(item)
+    applyPlayerEquipment()
 }
 
 function levelUpStat(stat) {
@@ -90,7 +90,7 @@ function completeChecks() {
     if (!player) return 
     checkForLevelUp()
     checkForStageAdvance()
-    checkForNewEquipment()
+    applyPlayerEquipment()
 }
 
 function setEnemy(e) {
@@ -98,7 +98,6 @@ function setEnemy(e) {
 }
 
 function init() {
-    // applyPlayerEquipment()
 }
 
 module.exports = {
