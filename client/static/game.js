@@ -167,7 +167,7 @@ function backToTitle() {
 
 var adventureButtonColor = "rgb(200, 200, 200)"
 var freePlayButtonColor = "rgb(200, 200, 200)"
-
+var howToPlayButtonColor = "rgb(200, 200, 200)"
 var w, h
 function title() {
     if (currentScreen == "title") {
@@ -183,14 +183,20 @@ function title() {
     context.rect(w * 0.28, h * 0.5, w * 0.2, h * 0.1)
     context.fill()
     context.closePath()
-
     context.beginPath()
     context.fillStyle = freePlayButtonColor
     context.rect(w * 0.58, h * 0.5, w * 0.2, h * 0.1)
     context.fill()
     context.closePath()
 
-    // write title text + text for both buttons
+    // Create how to play button box
+    context.beginPath()
+    context.fillStyle = howToPlayButtonColor
+    context.rect(w * 0.42, h * 0.75, w * 0.2, h * 0.1)
+    context.fill()
+    context.closePath()
+
+    // write title text + text for buttons
     context.beginPath()
     context.fillStyle = "rgb(40, 70, 120)"
     context.font = "normal 6vh Lato" //40px
@@ -199,13 +205,14 @@ function title() {
     context.font = "normal 20px Lato"
     context.fillText("Adventure", w * 0.32, h * 0.57)
     context.fillText("Freeplay", w * 0.64, h * 0.57)
+    context.fillText("How to play", w * 0.455, h * 0.82)
     context.closePath()
 
     if (quoteInputElement.value == "lmao") {
         quoteInputElement.value = "South Park Quotes Activated"
         quotesSource = "southPark"
     }
-    if (quoteInputElement.value == "classy") {
+    else if (quoteInputElement.value == "classy") {
         quotesSource = "inspirational"
         quoteInputElement.value = "A man of culture, I see."
     }
@@ -233,6 +240,16 @@ function title() {
             currentScreen = "adventure"
             adventure()
             
+        }
+    }
+    // check if "how to play" button is being hovered over
+    else if (mouseX > w * 0.42 && mouseX < w * 0.62 && mouseY > h * 0.75 & mouseY < h * 0.85) {
+        howToPlayButtonColor = "rgb(255, 255, 255)"
+        
+        if (click) {
+            click = false
+            howToPlayButtonColor = "rgb(200, 200, 200)"
+            quoteInputElement.value = "Welcome to Typersion: the best typing practice platform. You can choose between free play (exactly what it sounds like) and adventure mode, an rpg-typing-practice adventure! In adventure mode, correctly type the displayed quote in the input box to deal damage to the enemies. There are 5 enemies per stage and at the end of every fifth stage, you\'ll be challenged by a powerful boss. Gather XP to upgrade your stats. ATK controls how much damage you deal while LUK affects item drop rates and the difficulty of your quotes. If you see gold text falling after killing an enemy, go to your inventory (you can control the page with your arrow keys) and equip your new item for a boost to either ATK or LUK. That\'s all; hope you enjoy!"
         }
     }
     else {
@@ -833,10 +850,12 @@ function promptUpdateStats() {
         // attack increment button
         if (mouseX > 200 && mouseX < 230 && mouseY > 125 && mouseY < 145 && click) {
             thingsToEmit.push("levelUpPlayer attack")
+            quoteInputElement.select()
         }
         // luck increment button
         else if (mouseX > 200 && mouseX < 230 && mouseY > 160 && mouseY < 180 && click) {
             thingsToEmit.push("levelUpPlayer luck")
+            quoteInputElement.select()
         }
     }
 }
