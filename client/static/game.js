@@ -255,6 +255,7 @@ function title() {
     else {
         freePlayButtonColor = "rgb(200, 200, 200)"
         adventureButtonColor = "rgb(200, 200, 200)"
+        howToPlayButtonColor = "rgb(200, 200, 200)"
     }
     click = false
 
