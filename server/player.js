@@ -48,7 +48,7 @@ function givePlayerXP() {
 }
 
 function getXPUntilNextLevel(level) {
-    return Math.round( 0.04 * (Math.pow(level, 3)) + 0.8 * (level*level) + 2 * level)
+    return Math.round( 0.01 * (level ** 3) + 0.8 * (level ** 2) + 2 * level)
 }
 
 function dealDamage(multiplier) {
