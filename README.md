@@ -1,6 +1,6 @@
 # Typersion
 ## Where to Find the Game Online
-https://bit.ly/typersion
+https://bit.ly/Typersion
 ## Instructions for Local Installation
 1. Download or clone the repository.
 2. Download *Node.js* if you don't already have it (https://nodejs.org/en/download/).
