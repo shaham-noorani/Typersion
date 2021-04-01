@@ -45,7 +45,7 @@ function setEnemy(e) {
 function calcEnemyHealth() {
     var player = Player.getPlayer()
     var stage = player.stage
-    return Math.floor((stage ** 1.5) / 4) + 5
+    return Math.floor((stage ** 1.5) / 2) + 5
 }
 
 function completeChecks() {
