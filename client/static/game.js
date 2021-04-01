@@ -89,7 +89,7 @@ function getRandomQuote() {
         var stage = getPlayer().stage, luck = getPlayer().stats.luck * getPlayer().equipmentEffects.luckMultiplier
         var count = 0
         while (true) {
-            ran = Math.floor(stage - (Math.floor(Math.random() * 20) * -1 + 10) - luck)
+            ran = Math.floor(stage * 1.5 - (Math.floor(Math.random() * 20) * -1 + 10) - luck)
 
             if (ran < 0) { ran = 0 }
             if (ran >= quotes.length) { ran = quotes.length - 1 }
